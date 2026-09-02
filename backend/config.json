@@ -1,0 +1,15 @@
+{
+  "tt_api": {
+    "api_key": "55e5902f-199e-7904-c71f-a1a965cabdd4",
+    "api_secret": "55e5902f-199e-7904-c71f-a1a965cabdd4:3bb82cd5-3527-1e91-8209-253d280a6d18",
+    "environment": "ext_prod_live",
+    "company_name": "SYMFI"
+  },
+  "database": {
+    "url": "postgresql://user:password@localhost:5432/tt_pnl_dashboard"
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8020
+  }
+}

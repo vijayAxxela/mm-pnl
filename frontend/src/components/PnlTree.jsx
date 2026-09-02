@@ -1,0 +1,563 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+import { api } from "../api.js";
+import { ChevronRight } from "./icons.jsx";
+import ColumnFilterMenu from "./ColumnFilterMenu.jsx";
+
+const LEVEL_FIELDS = ["account_name", "exchange", "product_symbol", "contract"];
+const HEADERS = ["Account", "Exchange", "Product", "Contract"];
+
+// This app has no per-user accounts, so the tree's expanded nodes / column
+// filters / sort / manually-entered current prices are persisted globally
+// under these fixed keys rather than per-user — everyone who opens the PNL
+// page sees the same last state.
+const UI_STATE_KEY = "pnl-tree";
+const PRICES_KEY = "pnl-current-prices";
+
+function serializeTreeState(expanded, columnFilters, sortSpec) {
+  const filters = {};
+  for (const [level, values] of Object.entries(columnFilters)) {
+    filters[level] = [...values];
+  }
+  return { expanded: [...expanded], columnFilters: filters, sortSpec };
+}
+
+function deserializeTreeState(saved) {
+  if (!saved) return null;
+  const columnFilters = {};
+  for (const [level, values] of Object.entries(saved.columnFilters || {})) {
+    columnFilters[level] = new Set(values);
+  }
+  return {
+    expanded: new Set(saved.expanded || []),
+    columnFilters,
+    sortSpec: saved.sortSpec ?? null,
+  };
+}
+
+// There's no live price feed (TT's REST API has none), so "current price"
+// is always a manual input, typed in as the DISPLAY price the user sees in
+// the TT app (not TT's internal/raw price). avg_open_price and tick_size
+// are already scaled by DisplayFactor server-side to match, so no further
+// conversion is needed here — this just runs the same tick-based math the
+// backend used for realized_pnl.
+function computeUnrealizedUsd(row, currentPrice) {
+  if (currentPrice === null || currentPrice === undefined || !Number.isFinite(currentPrice)) return 0;
+  if (!row.open_qty || !row.tick_size) return 0;
+  const direction = row.open_qty > 0 ? 1 : -1;
+  const priceDiff = direction * (currentPrice - row.avg_open_price);
+  const unrealizedNative = (priceDiff / row.tick_size) * row.tick_value * Math.abs(row.open_qty);
+  // direction is -1 for a short position, so a zero price diff (current
+  // price == avg open price) multiplies out to -0 — a real JS value that's
+  // numerically zero but formats as "-0.00" and would otherwise show a
+  // flat position as a loss.
+  return unrealizedNative * (row.usd_rate ?? 1) || 0;
+}
+
+function makeNode(key, label, level) {
+  // avg_open_price/current_price/instrument_id are only ever set on leaf
+  // (Contract) nodes — a price can't be meaningfully summed/averaged across
+  // different instruments the way qty and PNL can.
+  return {
+    key,
+    label,
+    level,
+    buy_qty: 0,
+    sell_qty: 0,
+    open_qty: 0,
+    realized_pnl: 0,
+    unrealized_pnl: 0,
+    day_open_pnl: 0,
+    avg_open_price: null,
+    current_price: null,
+    instrument_id: null,
+    children: [],
+    childMap: new Map(),
+  };
+}
+
+function buildTree(rows, currentPrices) {
+  const root = makeNode("TOTAL", "TOTAL", -1);
+
+  for (const row of rows) {
+    let node = root;
+    let keyPath = "TOTAL";
+    for (let level = 0; level < LEVEL_FIELDS.length; level++) {
+      const value = row[LEVEL_FIELDS[level]];
+      keyPath += `/${value}`;
+      let child = node.childMap.get(value);
+      if (!child) {
+        child = makeNode(keyPath, value, level);
+        node.childMap.set(value, child);
+        node.children.push(child);
+      }
+      node = child;
+    }
+    const currentPrice = currentPrices[row.instrument_id];
+    node.buy_qty += row.buy_qty;
+    node.sell_qty += row.sell_qty;
+    node.open_qty += row.open_qty;
+    node.realized_pnl += row.realized_pnl;
+    node.unrealized_pnl += computeUnrealizedUsd(row, currentPrice);
+    node.day_open_pnl += row.day_open_pnl ?? 0;
+    node.avg_open_price = row.avg_open_price;
+    node.current_price = currentPrice ?? null;
+    node.instrument_id = row.instrument_id;
+  }
+
+  (function propagate(node) {
+    for (const child of node.children) {
+      propagate(child);
+      node.buy_qty += child.buy_qty;
+      node.sell_qty += child.sell_qty;
+      node.open_qty += child.open_qty;
+      node.realized_pnl += child.realized_pnl;
+      node.unrealized_pnl += child.unrealized_pnl;
+      node.day_open_pnl += child.day_open_pnl;
+    }
+  })(root);
+
+  return root;
+}
+
+// sortSpec: null | { type: "net"|"pnl"|"unrealized"|"total"|"dayOpen", dir } | { type: "level", level, dir }
+function applySort(node, sortSpec) {
+  if (!sortSpec || node.children.length === 0) return node;
+  let children = node.children.map((c) => applySort(c, sortSpec));
+  const childLevel = node.children[0].level;
+
+  const FIELD_BY_TYPE = { net: "open_qty", pnl: "realized_pnl", unrealized: "unrealized_pnl", dayOpen: "day_open_pnl" };
+
+  if (sortSpec.type in FIELD_BY_TYPE) {
+    const field = FIELD_BY_TYPE[sortSpec.type];
+    children = [...children].sort((a, b) => (sortSpec.dir === "asc" ? a[field] - b[field] : b[field] - a[field]));
+  } else if (sortSpec.type === "total") {
+    const totalOf = (n) => n.realized_pnl + n.unrealized_pnl;
+    children = [...children].sort((a, b) => (sortSpec.dir === "asc" ? totalOf(a) - totalOf(b) : totalOf(b) - totalOf(a)));
+  } else if (sortSpec.type === "level" && sortSpec.level === childLevel) {
+    children = [...children].sort((a, b) =>
+      sortSpec.dir === "asc" ? String(a.label).localeCompare(String(b.label)) : String(b.label).localeCompare(String(a.label)),
+    );
+  }
+
+  return { ...node, children };
+}
+
+function formatQty(n) {
+  const rounded = Math.round(n * 10000) / 10000;
+  const sign = rounded > 0 ? "+" : "";
+  return `${sign}${rounded.toLocaleString(undefined, { maximumFractionDigits: 4 })}`;
+}
+
+// Buy/Sell totals are always non-negative — no +/- sign needed, unlike Net.
+function formatUnsignedQty(n) {
+  const rounded = Math.round(n * 10000) / 10000;
+  return rounded.toLocaleString(undefined, { maximumFractionDigits: 4 });
+}
+
+// n.toFixed(2) on a value that's numerically zero but negatively-signed
+// (e.g. -0, or a tiny negative float that rounds to 0.00) prints "-0.00" —
+// technically correct JS behavior, but reads as a loss when there isn't
+// one. Money/PNL cells should never show a negative zero.
+function formatMoney(n) {
+  const text = n.toFixed(2);
+  return text === "-0.00" ? "0.00" : text;
+}
+
+function signClass(n) {
+  if (n > 0) return "pos";
+  if (n < 0) return "neg";
+  return "zero";
+}
+
+function Badge({ value, text }) {
+  return <span className={`pnl-badge ${signClass(value)}`}>{text}</span>;
+}
+
+// Local draft value, separate from the committed price that actually drives
+// recalculation — typing doesn't touch Unrealized/Total PNL until Enter or
+// blur commits it, instead of recomputing the whole tree on every keystroke.
+function PriceInput({ instrumentId, value, onCommit }) {
+  const [draft, setDraft] = useState(value ?? "");
+
+  useEffect(() => {
+    setDraft(value ?? "");
+  }, [value]);
+
+  const commit = () => onCommit(instrumentId, draft);
+
+  return (
+    <input
+      type="number"
+      step="any"
+      inputMode="decimal"
+      className="pnl-price-input"
+      placeholder="Set price"
+      value={draft}
+      onChange={(e) => setDraft(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          commit();
+          e.currentTarget.blur();
+        }
+      }}
+      onBlur={commit}
+    />
+  );
+}
+
+function NodeCells({ node, toggleBtn, onPriceChange }) {
+  const colIndex = node.level === -1 ? 0 : node.level;
+  const totalPnl = node.realized_pnl + node.unrealized_pnl;
+
+  return (
+    <>
+      {LEVEL_FIELDS.map((_, i) => (
+        <td key={i}>
+          {i === colIndex && (
+            <span className="pnl-tree-cell">
+              {toggleBtn}
+              <span className="pnl-tree-label" title={String(node.label)}>
+                {node.label}
+              </span>
+            </span>
+          )}
+        </td>
+      ))}
+      <td style={{ textAlign: "right" }} className="mono">
+        {formatUnsignedQty(node.buy_qty)}
+      </td>
+      <td style={{ textAlign: "right" }} className="mono">
+        {formatUnsignedQty(node.sell_qty)}
+      </td>
+      <td style={{ textAlign: "right" }}>
+        <Badge value={node.open_qty} text={formatQty(node.open_qty)} />
+      </td>
+      <td style={{ textAlign: "right" }}>
+        <Badge value={totalPnl} text={formatMoney(totalPnl)} />
+      </td>
+      <td style={{ textAlign: "right" }}>
+        <Badge value={node.unrealized_pnl} text={formatMoney(node.unrealized_pnl)} />
+      </td>
+      <td style={{ textAlign: "right" }}>
+        <Badge value={node.realized_pnl} text={formatMoney(node.realized_pnl)} />
+      </td>
+      <td style={{ textAlign: "right" }}>
+        {node.level === 3 && (
+          <PriceInput instrumentId={node.instrument_id} value={node.current_price} onCommit={onPriceChange} />
+        )}
+      </td>
+      <td style={{ textAlign: "right" }} className="mono">
+        {/* Only meaningful per-contract — a price can't be summed/averaged
+            across different instruments the way qty and PNL can. */}
+        {node.level === 3 ? node.avg_open_price.toFixed(4) : ""}
+      </td>
+      <td style={{ textAlign: "right" }}>
+        <Badge value={node.day_open_pnl} text={formatMoney(node.day_open_pnl)} />
+      </td>
+    </>
+  );
+}
+
+// TOTAL is a static summary row — it does not gate the account rows behind
+// its own expand state; accounts are always shown, each toggled on its own.
+function TotalRow({ node, onPriceChange }) {
+  return (
+    <tr className={`pnl-row level-${node.level}`}>
+      <NodeCells node={node} toggleBtn={<span className="pnl-tree-toggle-spacer" />} onPriceChange={onPriceChange} />
+    </tr>
+  );
+}
+
+function TreeRows({ node, expanded, toggle, onPriceChange }) {
+  const isExpanded = expanded.has(node.key);
+  const hasChildren = node.children.length > 0;
+
+  return (
+    <>
+      <tr className={`pnl-row level-${node.level}`}>
+        <NodeCells
+          node={node}
+          onPriceChange={onPriceChange}
+          toggleBtn={
+            hasChildren ? (
+              <button type="button" className="pnl-tree-toggle" onClick={() => toggle(node.key)}>
+                <ChevronRight size={18} strokeWidth={2.75} className={isExpanded ? "rotated" : ""} />
+              </button>
+            ) : (
+              <span className="pnl-tree-toggle-spacer" />
+            )
+          }
+        />
+      </tr>
+      {hasChildren &&
+        isExpanded &&
+        node.children.map((child) => (
+          <TreeRows key={child.key} node={child} expanded={expanded} toggle={toggle} onPriceChange={onPriceChange} />
+        ))}
+    </>
+  );
+}
+
+export default function PnlTree({ rows }) {
+  const [expanded, setExpanded] = useState(new Set()); // account/exchange/product keys the user opened
+  const [columnFilters, setColumnFilters] = useState({}); // level(0-3) -> Set<string> | undefined(=all)
+  const [sortSpec, setSortSpec] = useState(null);
+  const [currentPrices, setCurrentPrices] = useState({}); // instrument_id -> number
+
+  // Guards each save effect from firing with default/empty state before its
+  // load below has actually resolved (which would clobber what was saved).
+  const loadedRef = useRef(false);
+  const saveTimeoutRef = useRef(null);
+  const pricesLoadedRef = useRef(false);
+  const pricesSaveTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    api
+      .getUiState(UI_STATE_KEY)
+      .then((res) => {
+        const restored = deserializeTreeState(res.value);
+        if (restored) {
+          setExpanded(restored.expanded);
+          setColumnFilters(restored.columnFilters);
+          setSortSpec(restored.sortSpec);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        loadedRef.current = true;
+      });
+
+    api
+      .getUiState(PRICES_KEY)
+      .then((res) => {
+        if (res.value) setCurrentPrices(res.value);
+      })
+      .catch(() => {})
+      .finally(() => {
+        pricesLoadedRef.current = true;
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!loadedRef.current) return;
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    saveTimeoutRef.current = setTimeout(() => {
+      api.setUiState(UI_STATE_KEY, serializeTreeState(expanded, columnFilters, sortSpec)).catch(() => {});
+    }, 500);
+    return () => clearTimeout(saveTimeoutRef.current);
+  }, [expanded, columnFilters, sortSpec]);
+
+  useEffect(() => {
+    if (!pricesLoadedRef.current) return;
+    if (pricesSaveTimeoutRef.current) clearTimeout(pricesSaveTimeoutRef.current);
+    pricesSaveTimeoutRef.current = setTimeout(() => {
+      api.setUiState(PRICES_KEY, currentPrices).catch(() => {});
+    }, 500);
+    return () => clearTimeout(pricesSaveTimeoutRef.current);
+  }, [currentPrices]);
+
+  const uniqueValuesByLevel = useMemo(
+    () => LEVEL_FIELDS.map((field) => [...new Set(rows.map((r) => String(r[field])))].sort((a, b) => a.localeCompare(b))),
+    [rows],
+  );
+
+  const filteredRows = useMemo(
+    () =>
+      rows.filter((row) =>
+        LEVEL_FIELDS.every((field, i) => {
+          const selected = columnFilters[i];
+          return !selected || selected.has(String(row[field]));
+        }),
+      ),
+    [rows, columnFilters],
+  );
+
+  const displayRoot = useMemo(
+    () => applySort(buildTree(filteredRows, currentPrices), sortSpec),
+    [filteredRows, sortSpec, currentPrices],
+  );
+
+  // Reveal matching branches when a filter is applied — but through the
+  // normal toggle state (union, not an override), so the user can still
+  // collapse individual rows afterward instead of every node being forced
+  // open for as long as any filter stays active.
+  useEffect(() => {
+    if (Object.keys(columnFilters).length === 0) return;
+    const keysToExpand = new Set();
+    for (const row of filteredRows) {
+      let path = "TOTAL";
+      keysToExpand.add(path);
+      // Every ancestor level except the leaf (Contract has no children/toggle).
+      for (let level = 0; level < LEVEL_FIELDS.length - 1; level++) {
+        path += `/${row[LEVEL_FIELDS[level]]}`;
+        keysToExpand.add(path);
+      }
+    }
+    setExpanded((prev) => new Set([...prev, ...keysToExpand]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [columnFilters]);
+
+  const toggle = (key) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  const setLevelFilter = (level, selected) => {
+    setColumnFilters((prev) => {
+      const next = { ...prev };
+      if (selected === null) delete next[level];
+      else next[level] = selected;
+      return next;
+    });
+  };
+
+  const toggleSimpleSort = (type) =>
+    setSortSpec((prev) => {
+      if (!prev || prev.type !== type) return { type, dir: "desc" };
+      if (prev.dir === "desc") return { type, dir: "asc" };
+      return null;
+    });
+
+  const handlePriceChange = (instrumentId, valueStr) => {
+    setCurrentPrices((prev) => {
+      const next = { ...prev };
+      if (valueStr === "") delete next[instrumentId];
+      else next[instrumentId] = parseFloat(valueStr);
+      return next;
+    });
+  };
+
+  const hasActiveFilters = Object.keys(columnFilters).length > 0;
+
+  return (
+    <div>
+      {hasActiveFilters && (
+        <div className="row" style={{ margin: "0 0 var(--space-2)" }}>
+          <button type="button" className="link-btn" onClick={() => setColumnFilters({})}>
+            Clear all filters
+          </button>
+        </div>
+      )}
+
+      <div className="table-wrap pnl-tree-wrap">
+        <table className="pnl-tree-table">
+          <colgroup>
+            <col style={{ width: "12%" }} />
+            <col style={{ width: "9%" }} />
+            <col style={{ width: "9%" }} />
+            <col style={{ width: "12%" }} />
+            <col style={{ width: "7%" }} />
+            <col style={{ width: "7%" }} />
+            <col style={{ width: "7%" }} />
+            <col style={{ width: "7%" }} />
+            <col style={{ width: "6%" }} />
+            <col style={{ width: "6%" }} />
+            <col style={{ width: "6%" }} />
+            <col style={{ width: "6%" }} />
+            <col style={{ width: "6%" }} />
+          </colgroup>
+          <thead>
+            <tr>
+              {HEADERS.map((h, i) => (
+                <th key={h}>
+                  <div className="th-inner" style={{ justifyContent: "space-between" }}>
+                    <span className="th-label">{h}</span>
+                    <ColumnFilterMenu
+                      values={uniqueValuesByLevel[i]}
+                      selected={columnFilters[i] ?? null}
+                      onChange={(sel) => setLevelFilter(i, sel)}
+                      sortDir={sortSpec?.type === "level" && sortSpec.level === i ? sortSpec.dir : null}
+                      onSort={(dir) => setSortSpec({ type: "level", level: i, dir })}
+                    />
+                  </div>
+                </th>
+              ))}
+              <th>
+                <div className="th-inner" style={{ justifyContent: "flex-end" }}>
+                  <span className="th-label">Buy Qty</span>
+                </div>
+              </th>
+              <th>
+                <div className="th-inner" style={{ justifyContent: "flex-end" }}>
+                  <span className="th-label">Sell Qty</span>
+                </div>
+              </th>
+              <th>
+                <button type="button" className="th-sort" style={{ justifyContent: "flex-end" }} onClick={() => toggleSimpleSort("net")}>
+                  Net
+                  {sortSpec?.type === "net" && <span className="th-sort-indicator">{sortSpec.dir === "asc" ? "▲" : "▼"}</span>}
+                </button>
+              </th>
+              <th>
+                <button type="button" className="th-sort" style={{ justifyContent: "flex-end" }} onClick={() => toggleSimpleSort("total")}>
+                  Total PNL
+                  {sortSpec?.type === "total" && <span className="th-sort-indicator">{sortSpec.dir === "asc" ? "▲" : "▼"}</span>}
+                </button>
+              </th>
+              <th>
+                <button
+                  type="button"
+                  className="th-sort"
+                  style={{ justifyContent: "flex-end" }}
+                  onClick={() => toggleSimpleSort("unrealized")}
+                >
+                  Unrealized PNL
+                  {sortSpec?.type === "unrealized" && <span className="th-sort-indicator">{sortSpec.dir === "asc" ? "▲" : "▼"}</span>}
+                </button>
+              </th>
+              <th>
+                <button type="button" className="th-sort" style={{ justifyContent: "flex-end" }} onClick={() => toggleSimpleSort("pnl")}>
+                  Realized PNL
+                  {sortSpec?.type === "pnl" && <span className="th-sort-indicator">{sortSpec.dir === "asc" ? "▲" : "▼"}</span>}
+                </button>
+              </th>
+              <th>
+                <div className="th-inner" style={{ justifyContent: "flex-end" }}>
+                  <span className="th-label">Current Price</span>
+                </div>
+              </th>
+              <th>
+                <div className="th-inner" style={{ justifyContent: "flex-end" }}>
+                  <span className="th-label">Avg Open Price</span>
+                </div>
+              </th>
+              <th>
+                <button
+                  type="button"
+                  className="th-sort"
+                  style={{ justifyContent: "flex-end" }}
+                  onClick={() => toggleSimpleSort("dayOpen")}
+                >
+                  Day Open PNL
+                  {sortSpec?.type === "dayOpen" && <span className="th-sort-indicator">{sortSpec.dir === "asc" ? "▲" : "▼"}</span>}
+                </button>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <TotalRow node={displayRoot} onPriceChange={handlePriceChange} />
+            {displayRoot.children.map((account) => (
+              <TreeRows key={account.key} node={account} expanded={expanded} toggle={toggle} onPriceChange={handlePriceChange} />
+            ))}
+            {displayRoot.children.length === 0 && (
+              <tr>
+                <td colSpan={13}>
+                  <div className="empty-state">
+                    <p className="status">No rows match the current filters.</p>
+                    <button type="button" className="link-btn" onClick={() => setColumnFilters({})}>
+                      Clear all filters
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}

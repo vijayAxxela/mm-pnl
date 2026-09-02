@@ -1,0 +1,1039 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --color-background: #05070d;
+  --color-surface: #0b0f1a;
+  --color-surface-2: #121729;
+  --color-elevated: #161c31;
+  --color-border: #232a3d;
+  --color-border-strong: #333c54;
+  --color-border-faint: rgba(255, 255, 255, 0.06);
+  --color-foreground: #e5e9f0;
+  --color-muted-foreground: #7c88a1;
+  --color-accent: #22c55e;
+  --color-on-accent: #04140a;
+  --color-destructive: #f0475a;
+  --color-on-destructive: #1a0508;
+  --color-ring: #5b8def;
+
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 8px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 24px;
+
+  --radius: 5px;
+  --control-h: 28px;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: "Fira Sans", system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+code,
+pre,
+input,
+select,
+textarea,
+.mono {
+  font-family: "Fira Code", ui-monospace, monospace;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 1px;
+}
+
+/* ---------- app shell ---------- */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  height: 44px;
+  flex-shrink: 0;
+  padding: 0 var(--space-5);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.last-synced-badge {
+  margin-left: auto;
+  color: var(--color-muted-foreground);
+  font-size: 11px;
+  font-family: "Fira Code", ui-monospace, monospace;
+  white-space: nowrap;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-foreground);
+  white-space: nowrap;
+}
+
+.topbar-brand .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 6px var(--color-accent);
+}
+
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: 100%;
+}
+
+.topbar-nav a {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 var(--space-4);
+  text-decoration: none;
+  color: var(--color-muted-foreground);
+  font-size: 12.5px;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  transition: color 120ms, border-color 120ms;
+}
+
+.topbar-nav a:hover {
+  color: var(--color-foreground);
+}
+
+.topbar-nav a.active {
+  color: var(--color-foreground);
+  border-bottom-color: var(--color-accent);
+}
+
+.main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-5) var(--space-6);
+}
+
+.page-fill {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.page-fill .panel {
+  flex-shrink: 0;
+}
+
+.page-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-shrink: 0;
+  margin-bottom: var(--space-4);
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.page-header .status {
+  margin: 0;
+}
+
+/* ---------- panels ---------- */
+
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+.panel-title {
+  margin: 0 0 var(--space-3) 0;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-muted-foreground);
+}
+
+.row {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.field label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--color-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- controls ---------- */
+
+input,
+select {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-foreground);
+  border-radius: var(--radius);
+  padding: 0 var(--space-3);
+  height: var(--control-h);
+  transition: border-color 120ms, background-color 120ms;
+}
+
+input:hover,
+select:hover {
+  border-color: var(--color-muted-foreground);
+  background: var(--color-surface-2);
+}
+
+input::placeholder {
+  color: var(--color-muted-foreground);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0 var(--space-4);
+  height: var(--control-h);
+  font-weight: 600;
+  font-size: 12.5px;
+  transition: filter 120ms, background-color 120ms;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  filter: brightness(1.1);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.btn.secondary {
+  background: var(--color-surface-2);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border-strong);
+}
+
+.btn.secondary:hover {
+  background: var(--color-elevated);
+}
+
+.btn.danger {
+  background: var(--color-destructive);
+  color: var(--color-on-destructive);
+}
+
+.btn.xs {
+  height: 24px;
+  padding: 0 var(--space-3);
+  font-size: 11.5px;
+  gap: 4px;
+}
+
+.btn.icon-only {
+  width: var(--control-h);
+  padding: 0;
+}
+
+.btn.xs.icon-only {
+  width: 24px;
+}
+
+/* Give a content-fit table some breathing room instead of hugging text exactly. */
+.table-loose td,
+.table-loose .th-inner {
+  padding-left: var(--space-5);
+  padding-right: var(--space-5);
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--color-ring);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- table ---------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 5px var(--space-3);
+  border-bottom: 1px solid var(--color-border-faint);
+  border-right: 1px solid var(--color-border-faint);
+  white-space: nowrap;
+}
+
+th:last-child,
+td:last-child {
+  border-right: none;
+}
+
+th {
+  color: var(--color-muted-foreground);
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--color-surface-2);
+  border-bottom: 1px solid var(--color-border-strong);
+  padding: 0;
+}
+
+.th-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px var(--space-2) 6px var(--space-3);
+  min-width: 90px;
+}
+
+.th-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.th-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3);
+  color: inherit;
+  font: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+
+.th-sort:hover {
+  color: var(--color-foreground);
+}
+
+.th-sort-indicator {
+  color: var(--color-accent);
+  margin-left: 4px;
+  font-size: 9px;
+}
+
+tbody tr {
+  background: var(--color-surface);
+}
+
+tbody tr:nth-child(even) {
+  background: var(--color-surface-2);
+}
+
+tbody tr:hover {
+  background: var(--color-elevated);
+}
+
+.table-wrap {
+  overflow: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.table-wrap thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.table-wrap--attached {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* ---------- datatable ---------- */
+
+.datatable {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.datatable-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  margin-bottom: var(--space-2);
+}
+
+.datatable-toolbar-left,
+.datatable-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.datatable-count {
+  color: var(--color-muted-foreground);
+  font-size: 11px;
+  font-family: "Fira Code", monospace;
+  white-space: nowrap;
+}
+
+.search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-field-icon {
+  position: absolute;
+  left: 7px;
+  color: var(--color-muted-foreground);
+  pointer-events: none;
+}
+
+.search-field-clear {
+  position: absolute;
+  right: 4px;
+  background: none;
+  border: none;
+  color: var(--color-muted-foreground);
+  display: flex;
+  padding: 2px;
+  border-radius: 4px;
+}
+
+.search-field-clear:hover {
+  color: var(--color-foreground);
+  background: var(--color-surface-2);
+}
+
+/* ---------- custom date picker (native <input type=date> popups can't be
+   themed beyond a light/dark toggle, so this one is hand-built to match) ---------- */
+
+.date-field-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-foreground);
+  border-radius: var(--radius);
+  padding: 0 var(--space-3);
+  height: var(--control-h);
+  font-size: 13px;
+  font-family: "Fira Code", ui-monospace, monospace;
+  text-transform: none;
+  letter-spacing: normal;
+  transition: border-color 120ms, background-color 120ms;
+}
+
+.date-field-trigger svg {
+  color: var(--color-muted-foreground);
+  flex-shrink: 0;
+}
+
+.date-field-trigger:hover {
+  border-color: var(--color-muted-foreground);
+  background: var(--color-elevated);
+}
+
+.datepicker-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 240px;
+  z-index: 20;
+  background: var(--color-elevated);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  padding: var(--space-3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  color: var(--color-foreground);
+}
+
+.datepicker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.datepicker-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--color-muted-foreground);
+}
+
+.datepicker-nav-btn:hover {
+  background: var(--color-surface-2);
+  color: var(--color-foreground);
+}
+
+.datepicker-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: var(--space-1);
+}
+
+.datepicker-weekdays span {
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--color-muted-foreground);
+  text-transform: uppercase;
+}
+
+.datepicker-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.datepicker-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--color-foreground);
+  font-size: 12px;
+  font-family: "Fira Code", ui-monospace, monospace;
+}
+
+.datepicker-day:hover {
+  background: var(--color-surface-2);
+}
+
+.datepicker-day.outside {
+  color: var(--color-muted-foreground);
+}
+
+.datepicker-day.today {
+  border-color: var(--color-border-strong);
+}
+
+.datepicker-day.selected {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: 700;
+}
+
+.datepicker-footer {
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
+}
+
+.load-more-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-shrink: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-top: none;
+  border-bottom-left-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+/* ---------- excel-style column filter / columns menu ---------- */
+
+.col-filter {
+  position: relative;
+  display: inline-flex;
+}
+
+.col-filter-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--color-muted-foreground);
+  text-transform: none;
+}
+
+.col-filter-trigger:hover {
+  background: var(--color-elevated);
+  color: var(--color-foreground);
+}
+
+.col-filter-trigger.active {
+  color: var(--color-accent);
+}
+
+.col-filter-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  width: 220px;
+  background: var(--color-elevated);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  padding: var(--space-2);
+  z-index: 20;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  text-transform: none;
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: normal;
+  color: var(--color-foreground);
+}
+
+.col-filter-sort-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--color-foreground);
+  padding: 6px var(--space-2);
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: left;
+}
+
+.col-filter-sort-item:hover {
+  background: var(--color-surface-2);
+}
+
+.col-filter-sort-item.active {
+  color: var(--color-accent);
+}
+
+.col-filter-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--space-2) 0;
+}
+
+.col-filter-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.col-filter-search-icon {
+  position: absolute;
+  left: 7px;
+  color: var(--color-muted-foreground);
+}
+
+.col-filter-search input {
+  width: 100%;
+  height: 26px;
+  padding: 0 var(--space-2) 0 24px;
+  font-size: 12px;
+}
+
+.col-filter-values {
+  max-height: 180px;
+  overflow-y: auto;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-1) 0;
+  margin-bottom: var(--space-2);
+}
+
+.col-filter-value {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 4px var(--space-2);
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.col-filter-value:hover {
+  background: var(--color-surface-2);
+}
+
+.col-filter-value span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.col-filter-value input {
+  min-height: auto;
+  height: auto;
+  width: 13px;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.col-filter-selectall {
+  font-weight: 600;
+}
+
+.col-filter-empty {
+  padding: var(--space-3);
+  text-align: center;
+  color: var(--color-muted-foreground);
+  font-size: 11.5px;
+}
+
+.col-filter-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-top: var(--space-1);
+}
+
+.col-filter-footer-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.columns-menu {
+  width: 200px;
+}
+
+/* ---------- account search list ---------- */
+
+.autocomplete-panel {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  width: 260px;
+  z-index: 20;
+  background: var(--color-elevated);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  border-radius: var(--radius);
+  padding: var(--space-1);
+  overflow: hidden;
+}
+
+.account-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--color-foreground);
+  padding: 6px var(--space-2);
+  min-height: 30px;
+  font-size: 12.5px;
+}
+
+.account-option > :first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-option > :last-child {
+  flex-shrink: 0;
+}
+
+.account-option:hover {
+  background: var(--color-surface-2);
+}
+
+/* ---------- misc ---------- */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5);
+}
+
+.error {
+  color: var(--color-destructive);
+  font-size: 12px;
+  margin: var(--space-2) 0 0;
+}
+
+.status {
+  color: var(--color-muted-foreground);
+  font-size: 12px;
+  margin: var(--space-2) 0 0;
+}
+
+.pos {
+  color: var(--color-accent);
+}
+
+.neg {
+  color: var(--color-destructive);
+}
+
+/* ---------- pnl tree ---------- */
+
+.pnl-tree-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.pnl-tree-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--color-foreground);
+}
+
+.pnl-tree-toggle:hover {
+  background: var(--color-elevated);
+}
+
+.pnl-tree-toggle svg {
+  transition: transform 120ms;
+}
+
+.pnl-tree-toggle svg.rotated {
+  transform: rotate(90deg);
+}
+
+.pnl-tree-toggle-spacer {
+  display: inline-block;
+  width: 22px;
+  flex-shrink: 0;
+}
+
+/* Hierarchy is signaled mainly by font-weight + which column holds the
+   label (matching the reference terminal), not loud per-level background
+   swings — row backgrounds stay subtle so the colored PNL/NET badges are
+   what actually draws the eye. Still overrides the default zebra rule via
+   higher specificity, so it's a flat tone per level, not row-index banding. */
+tr.pnl-row.level--1 {
+  font-weight: 700;
+  background: var(--color-elevated);
+  border-top: 1px solid var(--color-border-strong);
+  border-bottom: 1px solid var(--color-border-strong);
+}
+
+tr.pnl-row.level-0 {
+  font-weight: 600;
+  background: var(--color-surface-2);
+}
+
+tr.pnl-row.level-1 {
+  font-weight: 500;
+  background: var(--color-surface);
+}
+
+tr.pnl-row.level-2 {
+  font-weight: 500;
+  background: var(--color-surface);
+}
+
+tr.pnl-row.level-3 {
+  font-weight: 400;
+  background: transparent;
+}
+
+.pnl-tree-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.pnl-tree-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.pnl-tree-table td {
+  padding: 6px var(--space-3);
+}
+
+.pnl-tree-table td:nth-child(5),
+.pnl-tree-table td:nth-child(6) {
+  padding-right: var(--space-4);
+}
+
+.pnl-badge {
+  display: inline-block;
+  min-width: 76px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  text-align: right;
+  font-weight: 600;
+  font-family: "Fira Code", ui-monospace, monospace;
+}
+
+.pnl-badge.pos {
+  background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+  color: var(--color-accent);
+}
+
+.pnl-badge.neg {
+  background: color-mix(in srgb, var(--color-destructive) 18%, transparent);
+  color: var(--color-destructive);
+}
+
+.pnl-badge.zero {
+  color: var(--color-muted-foreground);
+}
+
+.pnl-price-input {
+  width: 100%;
+  min-width: 0;
+  height: 24px;
+  padding: 0 6px;
+  text-align: right;
+  font-size: 12px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-strong);
+}
+
+.pnl-price-input:hover {
+  border-color: var(--color-muted-foreground);
+}
+
+.pnl-price-input::placeholder {
+  font-size: 10.5px;
+}
+
+.pnl-price-input::-webkit-outer-spin-button,
+.pnl-price-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.pnl-price-input[type="number"] {
+  -moz-appearance: textfield;
+}
