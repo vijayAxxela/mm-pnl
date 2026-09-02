@@ -138,6 +138,22 @@ a:focus-visible {
   box-shadow: 0 0 6px var(--color-accent);
 }
 
+/* Only rendered when import.meta.env.DEV is true (local `npm run dev`,
+   never the Docker-served production build) — a visible, hard-to-miss
+   marker that this is the dev instance, not production, since both can be
+   open in adjacent browser tabs at once. */
+.dev-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--color-destructive) 22%, transparent);
+  color: var(--color-destructive);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
 .topbar-nav {
   display: flex;
   align-items: center;

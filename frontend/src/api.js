@@ -4,7 +4,14 @@
 // whatever host/IP it used to reach the page in the first place, not its
 // own localhost. Falling back to window.location.hostname makes this work
 // automatically whether accessed as localhost or a LAN IP.
-const BASE_URL = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:8020`;
+//
+// The port itself depends on dev vs. production (import.meta.env.DEV is
+// Vite's own build-time flag — true only under `vite dev`, false in a
+// production build) — local dev's backend runs on 8021 (see backend/.env's
+// PORT), Docker's production backend always on 8020, matching vite.config.js's
+// same dev(5191)/production(5190) split for the frontend itself.
+const API_PORT = import.meta.env.DEV ? 8021 : 8020;
+const BASE_URL = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:${API_PORT}`;
 
 // Same host resolution as BASE_URL, just with the ws(s):// scheme swapped in
 // — used by useFillsSyncedSocket so a LAN client's socket goes back to the

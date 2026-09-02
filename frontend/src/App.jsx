@@ -17,6 +17,11 @@ export default function App() {
         <div className="topbar-brand">
           <span className="dot" aria-hidden="true" />
           MM PNL
+          {import.meta.env.DEV && (
+            <span className="dev-badge" title="Local development build">
+              DEV
+            </span>
+          )}
         </div>
         <nav className="topbar-nav">
           {links.map((link) => (

@@ -1,0 +1,51 @@
+name: mm-pnl
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-tt_pnl_dashboard}
+    volumes:
+      # Named volume — survives `docker compose up -d --build` on every
+      # redeploy. Only `docker compose down -v` (never run by the deploy
+      # workflow) would remove it.
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8020:8020"
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-tt_pnl_dashboard}
+      TT_API_KEY: ${TT_API_KEY}
+      TT_API_SECRET: ${TT_API_SECRET}
+      TT_ENVIRONMENT: ${TT_ENVIRONMENT:-ext_prod_live}
+      TRADING_DAY_START_TIME: ${TRADING_DAY_START_TIME:-06:00}
+      PORT: 8020
+      HOST: 0.0.0.0
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    ports:
+      - "5190:5190"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

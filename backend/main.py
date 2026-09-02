@@ -27,21 +27,28 @@ FILL_SYNC_INTERVAL_SECONDS = 20 * 60
 DAY_OPEN_SNAPSHOT_MINUTES_AFTER_START = 15
 
 def load_config():
+    """
+    config.json holds local-dev defaults/fallbacks only. Anything secret
+    (TT credentials) or environment-specific (port) is read from the
+    environment first — see the TT_API_*/PORT env vars below — so Docker
+    (and CI) never need a config.json containing real credentials baked
+    into the image or checked into git.
+    """
     config_path = os.path.join(os.path.dirname(__file__), 'config.json')
     try:
         with open(config_path, 'r') as f:
             return json.load(f)
     except FileNotFoundError:
-        raise Exception("config.json not found. Please create it in the root directory.")
+        return {}
     except json.JSONDecodeError:
         raise Exception("config.json is not valid JSON.")
 
 config = load_config()
 
 tt_client = TTClient(
-    api_key=config['tt_api']['api_key'],
-    api_secret=config['tt_api']['api_secret'],
-    environment=config['tt_api']['environment']
+    api_key=os.getenv('TT_API_KEY', config.get('tt_api', {}).get('api_key')),
+    api_secret=os.getenv('TT_API_SECRET', config.get('tt_api', {}).get('api_secret')),
+    environment=os.getenv('TT_ENVIRONMENT', config.get('tt_api', {}).get('environment', 'ext_prod_live'))
 )
 
 def _run_scheduled_fill_sync():
@@ -210,15 +217,20 @@ async def health_check():
         "status": "healthy",
         "tt_authenticated": tt_client.bearer_token is not None,
         "accounts_count": len(tt_client.accounts),
-        "environment": config['tt_api']['environment']
+        "environment": tt_client.environment
     }
 
 if __name__ == "__main__":
     import uvicorn
+    # PORT env var overrides config.json — Docker/production always sets it
+    # explicitly (or relies on config.json's 8020 default); local dev sets
+    # PORT=8021 in backend/.env (see .env.example) so it never collides with
+    # a docker-composed instance running on the same machine.
+    server_config = config.get('server', {})
     uvicorn.run(
         "main:app",
-        host=config['server']['host'],
-        port=config['server']['port'],
+        host=os.getenv('HOST', server_config.get('host', '0.0.0.0')),
+        port=int(os.getenv('PORT', server_config.get('port', 8020))),
         reload=True
     )
 
