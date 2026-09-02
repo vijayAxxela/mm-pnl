@@ -1,0 +1,5 @@
+# Shell scripts must keep LF line endings regardless of the checking-out
+# machine's git config — a CRLF shebang (#!/bin/sh\r) fails inside a Linux
+# container with a confusing "exec: no such file or directory", since the
+# kernel looks for an interpreter literally named "/bin/sh\r".
+*.sh text eol=lf
