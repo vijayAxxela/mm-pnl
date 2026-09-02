@@ -553,22 +553,29 @@ def snapshot_day_open_pnl(db: Session, tt_client) -> dict:
 def get_pnl_overview(db: Session = Depends(get_db)):
     """
     Public PNL overview endpoint — wraps _compute_pnl_rows and attaches each
-    row's "Day Open PNL" (the total-PNL snapshot taken at 6:45 AM IST for
-    the current trading day, if one has been taken yet — see
+    row's "Day Open PNL" (the total-PNL snapshot taken shortly after the
+    current trading day starts, if one has been taken yet — see
     snapshot_day_open_pnl), defaulting to 0.0 for a contract with no
-    snapshot (e.g. before today's first snapshot has run, or a
-    just-opened new contract).
+    snapshot (e.g. before today's snapshot has run, or a just-opened new
+    contract).
     """
     from main import tt_client
-    from routes.TT_routes import IST
+    from routes.fills import _trading_day_window_ns
     from database.db import DailyPnlSnapshot
 
     rows = _compute_pnl_rows(db, tt_client)
     if not rows:
         return []
 
-    today = datetime.now(IST).strftime('%Y-%m-%d')
-    snapshots = db.query(DailyPnlSnapshot).filter(DailyPnlSnapshot.snapshot_date == today).all()
+    # The trading day's own calendar date, NOT plain today's-date-at-midnight
+    # — the trading day rolls over at TRADING_DAY_START_TIME (e.g. 6:00 AM
+    # IST), same as snapshot_day_open_pnl's own snapshot_date, so between
+    # midnight and that time this still needs to look up YESTERDAY's
+    # snapshot (still the current trading day) rather than looking for
+    # today's, which hasn't been taken yet and would wrongly show 0.
+    _, _, window_start, _ = _trading_day_window_ns()
+    current_trading_day = window_start.strftime('%Y-%m-%d')
+    snapshots = db.query(DailyPnlSnapshot).filter(DailyPnlSnapshot.snapshot_date == current_trading_day).all()
     snapshot_by_key = {(s.account_id, s.instrument_id): s.day_open_pnl for s in snapshots}
 
     for row in rows:
