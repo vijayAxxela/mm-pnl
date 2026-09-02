@@ -1,14 +1,23 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "../api.js";
 import PnlTree from "../components/PnlTree.jsx";
+import { useFillsSyncedSocket } from "../utils/useFillsSyncedSocket.js";
 
 export default function PnlPage() {
   const [rows, setRows] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const fetchRows = useCallback(() => {
     api.getPnlOverview().then(setRows).catch((e) => setError(e.message));
   }, []);
+
+  useEffect(() => {
+    fetchRows();
+  }, [fetchRows]);
+
+  // Refetch the moment the backend's fill-sync scheduler pushes a
+  // fills_synced update, instead of only on page load/reload.
+  useFillsSyncedSocket(fetchRows);
 
   return (
     <div className="page-fill">

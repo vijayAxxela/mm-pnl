@@ -6,6 +6,11 @@
 // automatically whether accessed as localhost or a LAN IP.
 const BASE_URL = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:8020`;
 
+// Same host resolution as BASE_URL, just with the ws(s):// scheme swapped in
+// — used by useFillsSyncedSocket so a LAN client's socket goes back to the
+// same host it loaded the page from, not its own localhost.
+export const WS_BASE_URL = BASE_URL.replace(/^http/, "ws");
+
 async function request(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: { "Content-Type": "application/json" },

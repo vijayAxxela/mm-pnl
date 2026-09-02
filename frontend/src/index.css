@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  --color-background: #05070d;
+  --color-background: #0a0d16;
   --color-surface: #0b0f1a;
   --color-surface-2: #121729;
   --color-elevated: #161c31;
@@ -15,6 +15,19 @@
   --color-destructive: #f0475a;
   --color-on-destructive: #1a0508;
   --color-ring: #5b8def;
+
+  /* PNL tree row-hierarchy ladder — six evenly-spaced, clearly distinct
+     stops between the page background and a peak past --color-elevated,
+     used only by .pnl-row.level-*. Interpolated (not hand-picked hex) so
+     every stop keeps a real perceptual gap from its neighbors AND from the
+     page background itself. See the .pnl-row.level-* rules for why a
+     wider ladder than the surface/surface-2/elevated tokens is needed. */
+  --pnl-row-top: color-mix(in srgb, var(--color-elevated) 88%, white 12%);
+  --pnl-row-leaf: color-mix(in srgb, var(--color-background) 60%, var(--pnl-row-top) 40%);
+  --pnl-row-leaf-alt: color-mix(in srgb, var(--color-background) 46%, var(--pnl-row-top) 54%);
+  --pnl-row-product: color-mix(in srgb, var(--color-background) 34%, var(--pnl-row-top) 66%);
+  --pnl-row-exchange: color-mix(in srgb, var(--color-background) 23%, var(--pnl-row-top) 77%);
+  --pnl-row-account: color-mix(in srgb, var(--color-background) 12%, var(--pnl-row-top) 88%);
 
   --space-1: 2px;
   --space-2: 4px;
@@ -936,37 +949,99 @@ tbody tr:hover {
    label (matching the reference terminal), not loud per-level background
    swings — row backgrounds stay subtle so the colored PNL/NET badges are
    what actually draws the eye. Still overrides the default zebra rule via
-   higher specificity, so it's a flat tone per level, not row-index banding. */
+   higher specificity.
+
+   A full monotonic ramp, darkest to lightest: page background -> leaf ->
+   leaf-alt -> Product -> Exchange -> Account -> TOTAL (see the
+   --pnl-row-* tokens in :root — every stop is checked to keep a real,
+   perceptible gap from its neighbors AND from the page background, not
+   just a technically-different hex value). Contract (leaf) rows
+   additionally alternate via .leaf-alt (see TreeRows in PnlTree.jsx)
+   since same-product contracts would otherwise share one flat tone. */
 tr.pnl-row.level--1 {
   font-weight: 700;
-  background: var(--color-elevated);
+  background: var(--pnl-row-top);
   border-top: 1px solid var(--color-border-strong);
   border-bottom: 1px solid var(--color-border-strong);
 }
 
 tr.pnl-row.level-0 {
   font-weight: 600;
-  background: var(--color-surface-2);
+  background: var(--pnl-row-account);
 }
 
 tr.pnl-row.level-1 {
   font-weight: 500;
-  background: var(--color-surface);
+  background: var(--pnl-row-exchange);
 }
 
 tr.pnl-row.level-2 {
   font-weight: 500;
-  background: var(--color-surface);
+  background: var(--pnl-row-product);
 }
 
 tr.pnl-row.level-3 {
   font-weight: 400;
-  background: transparent;
+  background: var(--pnl-row-leaf);
+}
+
+tr.pnl-row.level-3.leaf-alt {
+  background: var(--pnl-row-leaf-alt);
+}
+
+/* Hover/selected work uniformly across every level's different base tone
+   via a fixed white-alpha wash (inset box-shadow with a huge spread, the
+   classic "shadow as a full-box overlay" trick) instead of filter:
+   brightness(), which multiplies the existing tone and so shrinks to
+   near-invisible on the already-fairly-dark leaf rows — a flat additive
+   wash stays equally visible no matter how light or dark the row is. */
+tr.pnl-row {
+  cursor: pointer;
+  transition: box-shadow 100ms;
+}
+
+tr.pnl-row:hover {
+  box-shadow: inset 0 0 0 9999px rgba(255, 255, 255, 0.09);
+}
+
+tr.pnl-row.selected {
+  box-shadow:
+    inset 3px 0 0 var(--color-ring),
+    inset 0 0 0 9999px rgba(91, 141, 239, 0.22);
+}
+
+tr.pnl-row.selected:hover {
+  box-shadow:
+    inset 3px 0 0 var(--color-ring),
+    inset 0 0 0 9999px rgba(91, 141, 239, 0.3);
 }
 
 .pnl-tree-table {
   width: 100%;
   table-layout: fixed;
+}
+
+.pnl-tree-table th {
+  position: relative;
+}
+
+/* Sits on the column's right border only (see ColumnResizeHandle in
+   PnlTree.jsx) — hovering shows the native col-resize cursor as the
+   affordance that something's double-clickable there, matching the
+   standard spreadsheet convention instead of an unlabeled hotspot
+   anywhere on the header. */
+.col-resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: col-resize;
+  z-index: 1;
+}
+
+.col-resize-handle:hover {
+  background: color-mix(in srgb, var(--color-ring) 55%, transparent);
 }
 
 .pnl-tree-label {
@@ -983,6 +1058,44 @@ tr.pnl-row.level-3 {
 .pnl-tree-table td:nth-child(5),
 .pnl-tree-table td:nth-child(6) {
   padding-right: var(--space-4);
+}
+
+/* Excel-style "shrink to fit", toggled globally by double-clicking ANY
+   column's border (a single toggle, not per-column — see contentFit in
+   PnlTree.jsx). No text wrapping — every column just shrinks to its own
+   widest single-line content (table-layout:auto's native browser
+   behavior), and the TABLE itself drops from width:100% to width:auto so
+   the whole thing gets physically narrower instead of redistributing a
+   fixed full-width across columns. */
+.pnl-tree-table.content-fit {
+  table-layout: auto;
+  width: auto;
+  max-width: 100%;
+}
+
+/* The table shrinking on its own isn't enough — .table-wrap is a block
+   element that stretches full-width by default, so its own background/
+   border would keep spanning the page past where the table actually ends.
+   Shrink the wrapper down to the table's real width too. */
+.pnl-tree-wrap.content-fit {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.pnl-tree-table.content-fit th,
+.pnl-tree-table.content-fit td {
+  white-space: nowrap;
+  padding-left: 2px;
+  padding-right: 4px;
+}
+
+.pnl-tree-table.content-fit .th-inner {
+  min-width: 0;
+  padding: 6px 4px 6px 2px;
+}
+
+.pnl-tree-table.content-fit .th-sort {
+  padding-left: 2px;
 }
 
 .pnl-badge {
@@ -1009,13 +1122,32 @@ tr.pnl-row.level-3 {
   color: var(--color-muted-foreground);
 }
 
+/* Unrealized/Realized/Day Open PNL — text color carries the sign, no pill
+   background (Net and Total PNL keep the filled badge, so those two
+   "headline" numbers still stand out at a glance). */
+.pnl-badge.bare {
+  padding: 3px 0;
+  background: none;
+}
+
 .pnl-price-input {
-  width: 100%;
-  min-width: 0;
+  /* Actual width is set inline per-input (see PriceInput in PnlTree.jsx) —
+     grows with what's typed instead of a fixed size, so a longer price
+     isn't clipped. This is just the pre-render fallback.
+
+     content-box (overriding the app-wide border-box reset) so that Nch is
+     purely the text area, with padding/border added on top instead of
+     eaten out of it — with border-box, this input's 12px of horizontal
+     padding + 2px border was silently stealing ~1-2 characters' worth of
+     the space an "8ch" width promised, so a value could overflow and get
+     auto-scrolled by the browser, permanently hiding its leading digit. */
+  box-sizing: content-box;
+  width: 8ch;
   height: 24px;
   padding: 0 6px;
   text-align: right;
   font-size: 12px;
+  font-family: "Fira Code", ui-monospace, monospace;
   background: var(--color-surface-2);
   border: 1px solid var(--color-border-strong);
 }

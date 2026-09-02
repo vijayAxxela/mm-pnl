@@ -1,0 +1,3943 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)file:///H:/My%20Drive/Download/fx_cnhusd_0526.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Quoting Calendar: CNH/USD Futures and FX Link Market Maker Program</title>
+<style>
+body {
+font-family: Helvetica,Arial,sans;
+font-size: 8pt;
+margin: 1em 1em 1em 1em
+}
+table { border-collapse: collapse; }
+.id_name { font-family: Consolas,Courier,fixed; font-size: 70%;}
+td { vertical-align: middle; text-align: center; text-color:#003057; }
+th { vertical-align: middle; text-align: center; text-color:#003057; background-color: #99C1BB;  }
+.celldetail { font-size: 80%; }
+.changed_cell { background-color: #61B1E3; text-color: black; font-weight: bold; }
+.holiday { background-color: #F2A900; }
+.weekend { background-color: #F2DCA9; }
+.inactive { background-color: #D1D1D6; }
+.notimplemented { background-color: #FFE0E0; }
+.error { background-color: #FF0000; }
+#reportTitle { font-size: 20pt; margin: 0 0 0.5ex 0; }
+#reportLogo {float: right; max-width: 30%}
+</style>
+</head>
+<body>
+<div class="header">
+<img id="reportLogo" src="data:image/gif;base64,R0lGODlhMgN6APf/AIPN8Fiw3QBztOL0/ACJxb/c7FOt3NDq9lOdwgBsqSqf1gCMyDCh1tjp8QGIvQB6tCOe1Mfj7zql2WC02Duh1W3A6Syc0iWLuX3J7cTl85/U6YDL7xuc0wB0rGq+6JPY9GG65nDC6t3x+hmIt8nn9L/i8AB9vYnQ8nLA5lGx4AB5uc3o9Vm04qzY7nXF7E2u3kCk1QCPyqHd9TWf00mt3p7c9ZHW9Jna9QCJwACCwFSy4QCEwnjG6yeUxSKQwRaOwNnu+QCUzQyZ0V645ajf84rM6wCNxROVzEGl2H652ozS8aTe9G2+5nrH7e32+ziTvjSj1wKZ0WK14Bt6o3zC5QCSzBSa0kaQuHnJ72W850Sq3NXs91+14Q2KvPD4+zKczmO65p/Q5j2kzQCAsGi9543W9U6q2Eip2gCCunLE7HTC6ACWz6vg9DKSwACHxBuRxEGKswB/v3G+5B2XzQCLwZrU8Gm54j6n2uHs87Db7nzG6fT4+/H5/Fq241aVuwB+tyKZ0H3L8GW75kWn2SqazpDV9EGp3EGo2mW44QCFub/g7gB2uAyUzHbE61az4g2OwwCHvInR87/k8kCr1obQ8w6FtU+v35fZ9F224wWQxI7T9ABvsO/4+2Cky0as3RGQxpza9I7U8pTX82edvc/j7xB0rqbe9JbX84rU9BiXzz2GrvX5+1qy30mr3CmVx3/I6gWWzmK444fO8SSEsuPw9kCt2Y3J5mm75COVx0yv3xB6uX/J5oDD40em1ky03WCu07ri9Wy64AB7uw+Y0AiCsUuo2G284yCKv7je8U+r2geMvhGArYHI6p/W7qfb9HjD6PP3+j6XwCqQv8jHx5GPj1pXWPHx8TEtLkxJStbV1T87POPj43ZzdKyrq56dnbq5uYSBgmhlZkClzjmdzQiQxFe14y+XyPf8/kyr3ASSyZHT8MTm916y3nfH7pHO6HCsz3Cv1Tir2fj8/p/I4C6KuaPX7yF/qjCn1kar2Ga83kCp1rTe80aLr1OPtCMfIP///yH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNC4yLjItYzA2MyA1My4zNTI2MjQsIDIwMDgvMDcvMzAtMTg6MDU6NDEgICAgICAgICI+CiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iCiAgICB4bWxuczp4bXBSaWdodHM9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9yaWdodHMvIgogICAgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIgogICAgeG1sbnM6SXB0YzR4bXBDb3JlPSJodHRwOi8vaXB0Yy5vcmcvc3RkL0lwdGM0eG1wQ29yZS8xLjAveG1sbnMvIgogICB4bXBSaWdodHM6V2ViU3RhdGVtZW50PSIiCiAgIHBob3Rvc2hvcDpBdXRob3JzUG9zaXRpb249IiI+CiAgIDxkYzpyaWdodHM+CiAgICA8cmRmOkFsdD4KICAgICA8cmRmOmxpIHhtbDpsYW5nPSJ4LWRlZmF1bHQiLz4KICAgIDwvcmRmOkFsdD4KICAgPC9kYzpyaWdodHM+CiAgIDxkYzpjcmVhdG9yPgogICAgPHJkZjpTZXE+CiAgICAgPHJkZjpsaS8+CiAgICA8L3JkZjpTZXE+CiAgIDwvZGM6Y3JlYXRvcj4KICAgPGRjOnRpdGxlPgogICAgPHJkZjpBbHQ+CiAgICAgPHJkZjpsaSB4bWw6bGFuZz0ieC1kZWZhdWx0Ij5DTUVHcm91cF8zRF9LPC9yZGY6bGk+CiAgICA8L3JkZjpBbHQ+CiAgIDwvZGM6dGl0bGU+CiAgIDx4bXBSaWdodHM6VXNhZ2VUZXJtcz4KICAgIDxyZGY6QWx0PgogICAgIDxyZGY6bGkgeG1sOmxhbmc9IngtZGVmYXVsdCIvPgogICAgPC9yZGY6QWx0PgogICA8L3htcFJpZ2h0czpVc2FnZVRlcm1zPgogICA8SXB0YzR4bXBDb3JlOkNyZWF0b3JDb250YWN0SW5mbwogICAgSXB0YzR4bXBDb3JlOkNpQWRyRXh0YWRyPSIiCiAgICBJcHRjNHhtcENvcmU6Q2lBZHJDaXR5PSIiCiAgICBJcHRjNHhtcENvcmU6Q2lBZHJSZWdpb249IiIKICAgIElwdGM0eG1wQ29yZTpDaUFkclBjb2RlPSIiCiAgICBJcHRjNHhtcENvcmU6Q2lBZHJDdHJ5PSIiCiAgICBJcHRjNHhtcENvcmU6Q2lUZWxXb3JrPSIiCiAgICBJcHRjNHhtcENvcmU6Q2lFbWFpbFdvcms9IiIKICAgIElwdGM0eG1wQ29yZTpDaVVybFdvcms9IiIvPgogIDwvcmRmOkRlc2NyaXB0aW9uPgogPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgIAo8P3hwYWNrZXQgZW5kPSJ3Ij8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAQAA/wAsAAAAADIDegAACP8A/wkcSLCgwYP/8PSb0mGMwzGJIoYhOMEBDhwWFQlUBAlSxEQTCIZ5OOZBh5MdrqxCyLKly5cwY8qcSbOmzZs4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" alt="CME Group Logo">
+<div id="reportTitle">Quoting Calendar:<br>CNH/USD Futures and FX Link Market Maker Program</div>
+<!--div id="reportDate" class="reportSubtitle"></div-->
+</div>
+
+<p>The following is a list of all the quoting obligations for CNH/USD Futures and FX Link Market Maker Program that you
+will find in your daily quoting reports. Please refer to the program documentation for how meeting
+these obligations will translate into benefits.</p>
+<p>All times in America/Chicago. All widths in Globex raw notation (GBX). Display and minimum price increment (MPI) conversions for information only.</p>
+<table style="table-layout: fixed; width: 68em;">
+<colgroup>
+<col style="width: 8em;">
+<col style="width: 10em;"><col style="width: 10em;"><col style="width: 10em;"><col style="width: 10em;"><col style="width: 10em;"><col style="width: 10em;">        </colgroup>
+<tbody><tr>
+<th>Date</th>
+<th>CNH Link
+</th>
+<th>CNH Outrights
+</th>
+<th>CNH Spread
+</th>
+<th>CNH Link Extreme Volatility
+</th>
+<th>CNH Outrights Extreme Volatility
+</th>
+<th>CNH Spread Extreme Volatility
+</th>
+</tr>
+<tr style="height: 8ex;">
+<td class="changed_cell">2026-05-01</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-05-02</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-05-03</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-04</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-05</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-06</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-07</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-08</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-05-09</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-05-10</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-11</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-12</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-13</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-14</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-15</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-05-16</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-05-17</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-18</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-19</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-20</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-21</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-22</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-05-23</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-05-24</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="holiday">2026-05-25</td>
+<td colspan="6" class="holiday">
+<span class="cellheader">Holiday</span>
+<br><span class="celldetail">Memorial Day</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-26</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-27</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-28</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-05-29</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-05-30</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-05-31</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr>
+<th>Date</th>
+<th>CNH Link
+</th>
+<th>CNH Outrights
+</th>
+<th>CNH Spread
+</th>
+<th>CNH Link Extreme Volatility
+</th>
+<th>CNH Outrights Extreme Volatility
+</th>
+<th>CNH Spread Extreme Volatility
+</th>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-01</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-02</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-03</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-04</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-05</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-06-06</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-06-07</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="changed_cell">2026-06-08</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6HU6-6HM6</span>
+<br><span class="celldetail">14@15.0 (GBX)</span>
+<br><span class="celldetail">1.5e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6HU6-6HM6</span>
+<br><span class="celldetail">7@25.0 (GBX)</span>
+<br><span class="celldetail">2.5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="obligation">2026-06-09</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6-6HM6</span>
+<br><span class="celldetail">14@15.0 (GBX)</span>
+<br><span class="celldetail">1.5e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6-6HM6</span>
+<br><span class="celldetail">7@25.0 (GBX)</span>
+<br><span class="celldetail">2.5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="obligation">2026-06-10</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6-6HM6</span>
+<br><span class="celldetail">14@15.0 (GBX)</span>
+<br><span class="celldetail">1.5e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6-6HM6</span>
+<br><span class="celldetail">7@25.0 (GBX)</span>
+<br><span class="celldetail">2.5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="obligation">2026-06-11</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6-6HM6</span>
+<br><span class="celldetail">14@15.0 (GBX)</span>
+<br><span class="celldetail">1.5e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6-6HM6</span>
+<br><span class="celldetail">7@25.0 (GBX)</span>
+<br><span class="celldetail">2.5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="obligation">2026-06-12</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6-6HM6</span>
+<br><span class="celldetail">14@15.0 (GBX)</span>
+<br><span class="celldetail">1.5e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:M6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HM6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6-6HM6</span>
+<br><span class="celldetail">7@25.0 (GBX)</span>
+<br><span class="celldetail">2.5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-06-13</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-06-14</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="changed_cell">2026-06-15</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-16</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-17</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-18</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="holiday">2026-06-19</td>
+<td colspan="6" class="holiday">
+<span class="cellheader">Holiday</span>
+<br><span class="celldetail">Juneteenth National Independence Day</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-06-20</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-06-21</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-22</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-23</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-24</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-25</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-26</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-06-27</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-06-28</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-29</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-06-30</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr>
+<th>Date</th>
+<th>CNH Link
+</th>
+<th>CNH Outrights
+</th>
+<th>CNH Spread
+</th>
+<th>CNH Link Extreme Volatility
+</th>
+<th>CNH Outrights Extreme Volatility
+</th>
+<th>CNH Spread Extreme Volatility
+</th>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-01</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-02</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="holiday">2026-07-03</td>
+<td colspan="6" class="holiday">
+<span class="cellheader">Holiday</span>
+<br><span class="celldetail">Independence Day</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-07-04</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-07-05</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-06</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-07</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-08</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-09</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-10</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-07-11</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-07-12</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-13</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-14</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-15</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-16</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-17</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-07-18</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-07-19</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-20</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-21</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-22</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-23</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-24</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-07-25</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-07-26</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-27</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-28</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-29</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-30</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-07-31</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr>
+<th>Date</th>
+<th>CNH Link
+</th>
+<th>CNH Outrights
+</th>
+<th>CNH Spread
+</th>
+<th>CNH Link Extreme Volatility
+</th>
+<th>CNH Outrights Extreme Volatility
+</th>
+<th>CNH Spread Extreme Volatility
+</th>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-08-01</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-08-02</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-03</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-04</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-05</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-06</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-07</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-08-08</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-08-09</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-10</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-11</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-12</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-13</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-14</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-08-15</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-08-16</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-17</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-18</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-19</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-20</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-21</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-08-22</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-08-23</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-24</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-25</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-26</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-27</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-28</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-08-29</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-08-30</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-08-31</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr>
+<th>Date</th>
+<th>CNH Link
+</th>
+<th>CNH Outrights
+</th>
+<th>CNH Spread
+</th>
+<th>CNH Link Extreme Volatility
+</th>
+<th>CNH Outrights Extreme Volatility
+</th>
+<th>CNH Spread Extreme Volatility
+</th>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-01</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-02</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-03</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="changed_cell">2026-09-04</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6HZ6-6HU6</span>
+<br><span class="celldetail">14@15.0 (GBX)</span>
+<br><span class="celldetail">1.5e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6HZ6-6HU6</span>
+<br><span class="celldetail">7@25.0 (GBX)</span>
+<br><span class="celldetail">2.5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-09-05</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-09-06</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="holiday">2026-09-07</td>
+<td colspan="6" class="holiday">
+<span class="cellheader">Holiday</span>
+<br><span class="celldetail">Labor Day</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="obligation">2026-09-08</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6-6HU6</span>
+<br><span class="celldetail">14@15.0 (GBX)</span>
+<br><span class="celldetail">1.5e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6-6HU6</span>
+<br><span class="celldetail">7@25.0 (GBX)</span>
+<br><span class="celldetail">2.5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="obligation">2026-09-09</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6-6HU6</span>
+<br><span class="celldetail">14@15.0 (GBX)</span>
+<br><span class="celldetail">1.5e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6-6HU6</span>
+<br><span class="celldetail">7@25.0 (GBX)</span>
+<br><span class="celldetail">2.5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="obligation">2026-09-10</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6-6HU6</span>
+<br><span class="celldetail">14@15.0 (GBX)</span>
+<br><span class="celldetail">1.5e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6-6HU6</span>
+<br><span class="celldetail">7@25.0 (GBX)</span>
+<br><span class="celldetail">2.5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="obligation">2026-09-11</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6-6HU6</span>
+<br><span class="celldetail">14@15.0 (GBX)</span>
+<br><span class="celldetail">1.5e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:U6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HU6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6-6HU6</span>
+<br><span class="celldetail">7@25.0 (GBX)</span>
+<br><span class="celldetail">2.5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-09-12</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-09-13</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="changed_cell">2026-09-14</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation; changed_cell">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-15</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-16</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-17</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-18</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-09-19</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-09-20</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-21</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-22</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-23</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-24</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-25</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-09-26</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="weekend">2026-09-27</td>
+<td colspan="6" class="weekend">
+<span class="cellheader">Weekend</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-28</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-29</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+<tr style="height: 8ex;">
+<td class="None">2026-09-30</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">70@10.0 (GBX)</span>
+<br><span class="celldetail">0.001  CNH=10 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">7@30.0 (GBX)</span>
+<br><span class="celldetail">3e-05  USD=3 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6H:YF:USDCNH:Z6</span>
+<br><span class="celldetail">35@15.0 (GBX)</span>
+<br><span class="celldetail">0.0015  CNH=15 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="obligation">
+<span class="cellheader">6HZ6</span>
+<br><span class="celldetail">4@50.0 (GBX)</span>
+<br><span class="celldetail">5e-05  USD=5 MPIs</span>
+<br><span class="celldetail">17:00 Y'day–16:00</span>
+</td>
+<td class="inactive">
+<span class="cellheader">Inactive</span>
+</td>
+</tr>
+</tbody></table>
+
+<block class="disclaimer">
+<p>Neither futures trading nor swaps trading are suitable for all investors, and each involves the risk of loss.  Swaps trading should only be undertaken by investors who are Eligible Contract Participants (ECPs) within the meaning of Section 1a(18) of the Commodity Exchange Act.  Futures and swaps each are leveraged investments and, because only a percentage of a contract’s value is required to trade, it is possible to lose more than the amount of money deposited for either a futures or swaps position.  Therefore, traders should only use funds that they can afford to lose without affecting their lifestyles and only a portion of those funds should be devoted to any one trade because traders cannot expect to profit on every trade.</p>
+<p>CME Group, the Globe Logo, CME, Globex, E-Mini, CME Direct, CME DataMine and Chicago Mercantile Exchange are trademarks of Chicago Mercantile Exchange Inc.  CBOT is a trademark of the Board of Trade of the City of Chicago, Inc.  NYMEX is a trademark of New York Mercantile Exchange, Inc.  COMEX is a trademark of Commodity Exchange, Inc. All other trademarks are the property of their respective owners.</p>
+<p>The information within this communication has been compiled by CME Group for general purposes only. Any discussion of market maker program incentive payouts is non-binding and serves only an illustrative purpose.  CME Group assumes no responsibility for any errors or omissions. Additionally, all examples in this communication are hypothetical situations, used for explanation purposes only, and should not be considered investment advice or the results of actual market experience.  All matters pertaining to rules and specifications herein are made subject to and superseded by official CME, CBOT, NYMEX and COMEX rules. Current rules should be consulted in all cases concerning contract specifications. Additionally, all incentive program participants are bound by the terms and conditions of their respective incentive program participant agreement.</p>
+<p>Copyright © 2026 CME Group Inc. All rights reserved.</p>
+</block>
+
+</body></html>

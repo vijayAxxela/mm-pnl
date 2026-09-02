@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from database.db import init_db, get_db, SessionLocal
-from routes import accounts, products, pnl, fills, ui_state
+from routes import accounts, products, pnl, fills, ui_state, ws
 from routes.TT_routes import TTClient, IST, TRADING_DAY_START_HOUR, TRADING_DAY_START_MINUTE
 from datetime import datetime, timedelta
 import asyncio
@@ -19,9 +19,11 @@ logger = logging.getLogger(__name__)
 # straight from it — up to date without anyone touching the Fills page.
 FILL_SYNC_INTERVAL_SECONDS = 20 * 60
 
-# "Day Open PNL" snapshot fires 15 minutes after each trading day starts —
-# giving the 6:30am fill-sync window (see routes.fills._trading_day_window_ns)
-# a head start to land that morning's fills before the snapshot is taken.
+# "Day Open PNL" snapshot fires this many minutes after each trading day
+# starts (see routes.TT_routes.TRADING_DAY_START_HOUR/MINUTE, env-configurable
+# via TRADING_DAY_START_TIME) — giving the fill-sync window (see
+# routes.fills._trading_day_window_ns) a head start to land that morning's
+# fills before the snapshot is taken.
 DAY_OPEN_SNAPSHOT_MINUTES_AFTER_START = 15
 
 def load_config():
@@ -45,7 +47,8 @@ tt_client = TTClient(
 def _run_scheduled_fill_sync():
     """Runs in a worker thread (see _fill_sync_loop) — sync_all_accounts_fills
     is synchronous (requests + a sync SQLAlchemy session), so it must not run
-    directly on the event loop."""
+    directly on the event loop. Returns the new last_synced_at on success (so
+    the caller can push it to connected clients), or None on failure."""
     db = SessionLocal()
     try:
         result = fills.sync_all_accounts_fills(db, tt_client)
@@ -57,15 +60,23 @@ def _run_scheduled_fill_sync():
         for r in result["results"]:
             if r["status"] == "error":
                 logger.warning(f"  {r['account_name']}: {r['detail']}")
+        return app.state.last_synced_at
     except Exception as e:
         logger.error(f"Scheduled fill sync failed: {e}")
+        return None
     finally:
         db.close()
 
 
 async def _fill_sync_loop():
     while True:
-        await asyncio.to_thread(_run_scheduled_fill_sync)
+        last_synced_at = await asyncio.to_thread(_run_scheduled_fill_sync)
+        if last_synced_at is not None:
+            # Push to every connected client — this is what lets the PNL
+            # page (and anything else listening) update itself the moment
+            # fills actually change, instead of only on a manual reload or
+            # a fixed poll interval.
+            await ws.broadcast({"type": "fills_synced", "last_synced_at": last_synced_at.isoformat()})
         await asyncio.sleep(FILL_SYNC_INTERVAL_SECONDS)
 
 
@@ -87,10 +98,9 @@ def _run_day_open_snapshot():
 
 async def _daily_snapshot_loop():
     """
-    Sleeps until the next 6:30am-IST-plus-15min mark (see
-    DAY_OPEN_SNAPSHOT_MINUTES_AFTER_START), takes the snapshot, then repeats
-    for the following day — rather than polling, since this only needs to
-    fire once per trading day.
+    Sleeps until the next (trading-day-start + DAY_OPEN_SNAPSHOT_MINUTES_AFTER_START)
+    mark, takes the snapshot, then repeats for the following day — rather
+    than polling, since this only needs to fire once per trading day.
     """
     while True:
         now_ist = datetime.now(IST)
@@ -182,6 +192,7 @@ app.include_router(products.router, prefix="/api/products", tags=["Products"])
 app.include_router(pnl.router, prefix="/api/pnl", tags=["PNL"])
 app.include_router(fills.router, prefix="/api/fills", tags=["Fills"])
 app.include_router(ui_state.router, prefix="/api/ui-state", tags=["UI State"])
+app.include_router(ws.router, prefix="/ws", tags=["WebSocket"])
 
 @app.get("/")
 async def root():

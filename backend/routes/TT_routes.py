@@ -16,15 +16,35 @@ import pytz
 
 IST = pytz.timezone('Asia/Kolkata')
 
+
+def _load_trading_day_start() -> tuple[int, int]:
+    """
+    Reads TRADING_DAY_START_TIME (HH:MM, IST) from the environment, e.g.
+    'TRADING_DAY_START_TIME=06:00' in backend/.env, so this can be changed
+    without a code edit. Falls back to 06:00 if unset or malformed.
+    """
+    raw = os.getenv("TRADING_DAY_START_TIME", "06:00")
+    try:
+        hour_str, minute_str = raw.split(":")
+        hour, minute = int(hour_str), int(minute_str)
+        if not (0 <= hour <= 23 and 0 <= minute <= 59):
+            raise ValueError
+        return hour, minute
+    except (ValueError, AttributeError):
+        logging.getLogger(__name__).warning(
+            f"Invalid TRADING_DAY_START_TIME={raw!r}, expected HH:MM — falling back to 06:00"
+        )
+        return 6, 0
+
+
 # The trading-day boundary used consistently everywhere a calendar date gets
 # turned into a fill-query window — PNL start-date filtering, account
 # backfill, manual Fills-page date range, and the scheduler's fill sync (see
 # fills._trading_day_window_ns, which reuses these same constants) all treat
-# a "day" as running 6:30 AM IST to 6:30 AM IST the next day, not midnight
-# to midnight, so PNL and fill fetching always agree on what a given date
-# actually covers.
-TRADING_DAY_START_HOUR = 6
-TRADING_DAY_START_MINUTE = 30
+# a "day" as running from this time IST to the same time IST the next day,
+# not midnight to midnight, so PNL and fill fetching always agree on what a
+# given date actually covers. Configurable via TRADING_DAY_START_TIME.
+TRADING_DAY_START_HOUR, TRADING_DAY_START_MINUTE = _load_trading_day_start()
 
 
 def ist_date_to_ns(date_str: Optional[str], end_of_day: bool = False) -> Optional[int]:
@@ -32,8 +52,8 @@ def ist_date_to_ns(date_str: Optional[str], end_of_day: bool = False) -> Optiona
     Convert a 'YYYY-MM-DD' calendar date to nanoseconds since epoch, anchored
     to the trading-day boundary (see TRADING_DAY_START_HOUR/MINUTE) rather
     than midnight. end_of_day gives the last moment of that trading day —
-    06:29:59.999999 IST on the following calendar date, i.e. just before the
-    next trading day begins.
+    one microsecond before the start time on the following calendar date,
+    i.e. just before the next trading day begins.
     """
     if not date_str:
         return None

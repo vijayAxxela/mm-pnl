@@ -94,7 +94,15 @@ class Product(Base):
     tickSize = Column(Float)
     tickSizeDenominator = Column(Integer)
     tickSizeNumerator = Column(Integer)
+
+    # TT's tickValue is sometimes wrong (confirmed on HKEX GDU: TT returns
+    # the per-gram tick amount, 0.01, instead of the per-contract value,
+    # pointValue x tickSize = 1000 x 0.01 = 10 — it never applied the
+    # contract's unit-size multiplier). We store the CORRECTED value here
+    # (pointValue x tickSize when that disagrees with TT's raw figure);
+    # TT's original, unmodified value is still recoverable from `raw`.
     tickValue = Column(Float)
+    tick_value_adjusted = Column(Boolean, default=False)
 
     # TT currency id the product trades in (from ttpds/product), used to
     # convert PNL to USD. Cached here so we only look it up once per product.

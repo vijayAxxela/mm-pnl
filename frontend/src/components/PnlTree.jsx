@@ -2,9 +2,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../api.js";
 import { ChevronRight } from "./icons.jsx";
 import ColumnFilterMenu from "./ColumnFilterMenu.jsx";
+import { useClickOutside } from "../utils/useClickOutside.js";
 
 const LEVEL_FIELDS = ["account_name", "exchange", "product_symbol", "contract"];
 const HEADERS = ["Account", "Exchange", "Product", "Contract"];
+
+// Account, Exchange, Product, Contract, Buy Qty, Sell Qty, Net, Total PNL,
+// Unrealized PNL, Realized PNL, Current Price, Avg Open Price, Day Open PNL
+const DEFAULT_COL_WIDTHS = ["12%", "9%", "9%", "12%", "7%", "7%", "7%", "7%", "6%", "6%", "6%", "6%", "6%"];
 
 // This app has no per-user accounts, so the tree's expanded nodes / column
 // filters / sort / manually-entered current prices are persisted globally
@@ -13,12 +18,12 @@ const HEADERS = ["Account", "Exchange", "Product", "Contract"];
 const UI_STATE_KEY = "pnl-tree";
 const PRICES_KEY = "pnl-current-prices";
 
-function serializeTreeState(expanded, columnFilters, sortSpec) {
+function serializeTreeState(expanded, columnFilters, sortSpec, contentFit) {
   const filters = {};
   for (const [level, values] of Object.entries(columnFilters)) {
     filters[level] = [...values];
   }
-  return { expanded: [...expanded], columnFilters: filters, sortSpec };
+  return { expanded: [...expanded], columnFilters: filters, sortSpec, contentFit };
 }
 
 function deserializeTreeState(saved) {
@@ -31,6 +36,7 @@ function deserializeTreeState(saved) {
     expanded: new Set(saved.expanded || []),
     columnFilters,
     sortSpec: saved.sortSpec ?? null,
+    contentFit: saved.contentFit ?? false,
   };
 }
 
@@ -169,8 +175,8 @@ function signClass(n) {
   return "zero";
 }
 
-function Badge({ value, text }) {
-  return <span className={`pnl-badge ${signClass(value)}`}>{text}</span>;
+function Badge({ value, text, bare = false }) {
+  return <span className={`pnl-badge ${signClass(value)}${bare ? " bare" : ""}`}>{text}</span>;
 }
 
 // Local draft value, separate from the committed price that actually drives
@@ -185,6 +191,10 @@ function PriceInput({ instrumentId, value, onCommit }) {
 
   const commit = () => onCommit(instrumentId, draft);
 
+  // Sized for 8 digits by default, but grows with whatever's actually typed
+  // instead of clipping a longer price — the "8 digits" is a floor, not a cap.
+  const width = `${Math.max(8, draft.length + 1)}ch`;
+
   return (
     <input
       type="number"
@@ -193,6 +203,7 @@ function PriceInput({ instrumentId, value, onCommit }) {
       className="pnl-price-input"
       placeholder="Set price"
       value={draft}
+      style={{ width }}
       onChange={(e) => setDraft(e.target.value)}
       onKeyDown={(e) => {
         if (e.key === "Enter") {
@@ -203,6 +214,16 @@ function PriceInput({ instrumentId, value, onCommit }) {
       onBlur={commit}
     />
   );
+}
+
+// Sits on a column's right border only — not the rest of the header, so a
+// double-click here doesn't also fire the header's own sort toggle.
+// Excel-style: hovering shows the native col-resize cursor as an affordance
+// that something's double-clickable there; double-clicking toggles EVERY
+// column at once between fixed widths and shrink-to-fit-and-wrap (see
+// contentFit in PnlTree — a single global toggle, not per-column).
+function ColumnResizeHandle({ onToggle }) {
+  return <span className="col-resize-handle" onDoubleClick={onToggle} onClick={(e) => e.stopPropagation()} />;
 }
 
 function NodeCells({ node, toggleBtn, onPriceChange }) {
@@ -236,10 +257,10 @@ function NodeCells({ node, toggleBtn, onPriceChange }) {
         <Badge value={totalPnl} text={formatMoney(totalPnl)} />
       </td>
       <td style={{ textAlign: "right" }}>
-        <Badge value={node.unrealized_pnl} text={formatMoney(node.unrealized_pnl)} />
+        <Badge value={node.unrealized_pnl} text={formatMoney(node.unrealized_pnl)} bare />
       </td>
       <td style={{ textAlign: "right" }}>
-        <Badge value={node.realized_pnl} text={formatMoney(node.realized_pnl)} />
+        <Badge value={node.realized_pnl} text={formatMoney(node.realized_pnl)} bare />
       </td>
       <td style={{ textAlign: "right" }}>
         {node.level === 3 && (
@@ -252,7 +273,7 @@ function NodeCells({ node, toggleBtn, onPriceChange }) {
         {node.level === 3 ? node.avg_open_price.toFixed(4) : ""}
       </td>
       <td style={{ textAlign: "right" }}>
-        <Badge value={node.day_open_pnl} text={formatMoney(node.day_open_pnl)} />
+        <Badge value={node.day_open_pnl} text={formatMoney(node.day_open_pnl)} bare />
       </td>
     </>
   );
@@ -260,21 +281,33 @@ function NodeCells({ node, toggleBtn, onPriceChange }) {
 
 // TOTAL is a static summary row — it does not gate the account rows behind
 // its own expand state; accounts are always shown, each toggled on its own.
-function TotalRow({ node, onPriceChange }) {
+function TotalRow({ node, onPriceChange, selectedKey, onSelect }) {
   return (
-    <tr className={`pnl-row level-${node.level}`}>
+    <tr
+      className={`pnl-row level-${node.level}${selectedKey === node.key ? " selected" : ""}`}
+      onClick={() => onSelect(node.key)}
+    >
       <NodeCells node={node} toggleBtn={<span className="pnl-tree-toggle-spacer" />} onPriceChange={onPriceChange} />
     </tr>
   );
 }
 
-function TreeRows({ node, expanded, toggle, onPriceChange }) {
+function TreeRows({ node, expanded, toggle, onPriceChange, selectedKey, onSelect, siblingIndex = 0 }) {
   const isExpanded = expanded.has(node.key);
   const hasChildren = node.children.length > 0;
+  // Contract (leaf) rows alternate by position among their own product's
+  // siblings — not a table-wide nth-child, which can't track "position
+  // within this parent" once ancestor rows above are variably
+  // expanded/collapsed and shift everything's absolute row index around.
+  const isAltLeaf = node.level === 3 && siblingIndex % 2 === 1;
+  const isSelected = selectedKey === node.key;
 
   return (
     <>
-      <tr className={`pnl-row level-${node.level}`}>
+      <tr
+        className={`pnl-row level-${node.level}${isAltLeaf ? " leaf-alt" : ""}${isSelected ? " selected" : ""}`}
+        onClick={() => onSelect(node.key)}
+      >
         <NodeCells
           node={node}
           onPriceChange={onPriceChange}
@@ -291,8 +324,17 @@ function TreeRows({ node, expanded, toggle, onPriceChange }) {
       </tr>
       {hasChildren &&
         isExpanded &&
-        node.children.map((child) => (
-          <TreeRows key={child.key} node={child} expanded={expanded} toggle={toggle} onPriceChange={onPriceChange} />
+        node.children.map((child, i) => (
+          <TreeRows
+            key={child.key}
+            node={child}
+            expanded={expanded}
+            toggle={toggle}
+            onPriceChange={onPriceChange}
+            selectedKey={selectedKey}
+            onSelect={onSelect}
+            siblingIndex={i}
+          />
         ))}
     </>
   );
@@ -303,6 +345,13 @@ export default function PnlTree({ rows }) {
   const [columnFilters, setColumnFilters] = useState({}); // level(0-3) -> Set<string> | undefined(=all)
   const [sortSpec, setSortSpec] = useState(null);
   const [currentPrices, setCurrentPrices] = useState({}); // instrument_id -> number
+  const [selectedKey, setSelectedKey] = useState(null); // last-clicked row, transient (not persisted)
+  // Excel-style "shrink to fit": off (false) = fixed % column widths. On
+  // (true) = every column shrinks to its own single-line content width and
+  // the table itself narrows instead of staying stretched to 100%. Global,
+  // not per-column — toggled together via any column border's double-click
+  // (see ColumnResizeHandle).
+  const [contentFit, setContentFit] = useState(false);
 
   // Guards each save effect from firing with default/empty state before its
   // load below has actually resolved (which would clobber what was saved).
@@ -320,6 +369,7 @@ export default function PnlTree({ rows }) {
           setExpanded(restored.expanded);
           setColumnFilters(restored.columnFilters);
           setSortSpec(restored.sortSpec);
+          setContentFit(restored.contentFit);
         }
       })
       .catch(() => {})
@@ -342,10 +392,10 @@ export default function PnlTree({ rows }) {
     if (!loadedRef.current) return;
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     saveTimeoutRef.current = setTimeout(() => {
-      api.setUiState(UI_STATE_KEY, serializeTreeState(expanded, columnFilters, sortSpec)).catch(() => {});
+      api.setUiState(UI_STATE_KEY, serializeTreeState(expanded, columnFilters, sortSpec, contentFit)).catch(() => {});
     }, 500);
     return () => clearTimeout(saveTimeoutRef.current);
-  }, [expanded, columnFilters, sortSpec]);
+  }, [expanded, columnFilters, sortSpec, contentFit]);
 
   useEffect(() => {
     if (!pricesLoadedRef.current) return;
@@ -422,6 +472,14 @@ export default function PnlTree({ rows }) {
       return null;
     });
 
+  const toggleContentFit = () => setContentFit((prev) => !prev);
+
+  // Clicking the already-selected row again deselects it; clicking anywhere
+  // else in the page (outside the table) also clears the selection instead
+  // of leaving a stale row highlighted once the user's moved on.
+  const toggleRowSelect = (key) => setSelectedKey((prev) => (prev === key ? null : key));
+  const clickOutsideRef = useClickOutside(() => setSelectedKey(null));
+
   const handlePriceChange = (instrumentId, valueStr) => {
     setCurrentPrices((prev) => {
       const next = { ...prev };
@@ -443,23 +501,15 @@ export default function PnlTree({ rows }) {
         </div>
       )}
 
-      <div className="table-wrap pnl-tree-wrap">
-        <table className="pnl-tree-table">
-          <colgroup>
-            <col style={{ width: "12%" }} />
-            <col style={{ width: "9%" }} />
-            <col style={{ width: "9%" }} />
-            <col style={{ width: "12%" }} />
-            <col style={{ width: "7%" }} />
-            <col style={{ width: "7%" }} />
-            <col style={{ width: "7%" }} />
-            <col style={{ width: "7%" }} />
-            <col style={{ width: "6%" }} />
-            <col style={{ width: "6%" }} />
-            <col style={{ width: "6%" }} />
-            <col style={{ width: "6%" }} />
-            <col style={{ width: "6%" }} />
-          </colgroup>
+      <div className={`table-wrap pnl-tree-wrap${contentFit ? " content-fit" : ""}`} ref={clickOutsideRef}>
+        <table className={`pnl-tree-table${contentFit ? " content-fit" : ""}`}>
+          {!contentFit && (
+            <colgroup>
+              {DEFAULT_COL_WIDTHS.map((w, i) => (
+                <col key={i} style={{ width: w }} />
+              ))}
+            </colgroup>
+          )}
           <thead>
             <tr>
               {HEADERS.map((h, i) => (
@@ -474,29 +524,34 @@ export default function PnlTree({ rows }) {
                       onSort={(dir) => setSortSpec({ type: "level", level: i, dir })}
                     />
                   </div>
+                  <ColumnResizeHandle onToggle={toggleContentFit} />
                 </th>
               ))}
               <th>
                 <div className="th-inner" style={{ justifyContent: "flex-end" }}>
                   <span className="th-label">Buy Qty</span>
                 </div>
+                <ColumnResizeHandle onToggle={toggleContentFit} />
               </th>
               <th>
                 <div className="th-inner" style={{ justifyContent: "flex-end" }}>
                   <span className="th-label">Sell Qty</span>
                 </div>
+                <ColumnResizeHandle onToggle={toggleContentFit} />
               </th>
               <th>
                 <button type="button" className="th-sort" style={{ justifyContent: "flex-end" }} onClick={() => toggleSimpleSort("net")}>
                   Net
                   {sortSpec?.type === "net" && <span className="th-sort-indicator">{sortSpec.dir === "asc" ? "▲" : "▼"}</span>}
                 </button>
+                <ColumnResizeHandle onToggle={toggleContentFit} />
               </th>
               <th>
                 <button type="button" className="th-sort" style={{ justifyContent: "flex-end" }} onClick={() => toggleSimpleSort("total")}>
                   Total PNL
                   {sortSpec?.type === "total" && <span className="th-sort-indicator">{sortSpec.dir === "asc" ? "▲" : "▼"}</span>}
                 </button>
+                <ColumnResizeHandle onToggle={toggleContentFit} />
               </th>
               <th>
                 <button
@@ -508,22 +563,26 @@ export default function PnlTree({ rows }) {
                   Unrealized PNL
                   {sortSpec?.type === "unrealized" && <span className="th-sort-indicator">{sortSpec.dir === "asc" ? "▲" : "▼"}</span>}
                 </button>
+                <ColumnResizeHandle onToggle={toggleContentFit} />
               </th>
               <th>
                 <button type="button" className="th-sort" style={{ justifyContent: "flex-end" }} onClick={() => toggleSimpleSort("pnl")}>
                   Realized PNL
                   {sortSpec?.type === "pnl" && <span className="th-sort-indicator">{sortSpec.dir === "asc" ? "▲" : "▼"}</span>}
                 </button>
+                <ColumnResizeHandle onToggle={toggleContentFit} />
               </th>
               <th>
                 <div className="th-inner" style={{ justifyContent: "flex-end" }}>
                   <span className="th-label">Current Price</span>
                 </div>
+                <ColumnResizeHandle onToggle={toggleContentFit} />
               </th>
               <th>
                 <div className="th-inner" style={{ justifyContent: "flex-end" }}>
                   <span className="th-label">Avg Open Price</span>
                 </div>
+                <ColumnResizeHandle onToggle={toggleContentFit} />
               </th>
               <th>
                 <button
@@ -535,13 +594,27 @@ export default function PnlTree({ rows }) {
                   Day Open PNL
                   {sortSpec?.type === "dayOpen" && <span className="th-sort-indicator">{sortSpec.dir === "asc" ? "▲" : "▼"}</span>}
                 </button>
+                <ColumnResizeHandle onToggle={toggleContentFit} />
               </th>
             </tr>
           </thead>
           <tbody>
-            <TotalRow node={displayRoot} onPriceChange={handlePriceChange} />
+            <TotalRow
+              node={displayRoot}
+              onPriceChange={handlePriceChange}
+              selectedKey={selectedKey}
+              onSelect={setSelectedKey}
+            />
             {displayRoot.children.map((account) => (
-              <TreeRows key={account.key} node={account} expanded={expanded} toggle={toggle} onPriceChange={handlePriceChange} />
+              <TreeRows
+                key={account.key}
+                node={account}
+                expanded={expanded}
+                toggle={toggle}
+                onPriceChange={handlePriceChange}
+                selectedKey={selectedKey}
+                onSelect={toggleRowSelect}
+              />
             ))}
             {displayRoot.children.length === 0 && (
               <tr>

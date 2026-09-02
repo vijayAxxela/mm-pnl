@@ -328,12 +328,13 @@ def sync_fills_for_account(db: Session, tt_client, account: Account, start_date:
 
 def _trading_day_window_ns() -> tuple[int, int, datetime, datetime]:
     """
-    The current trading-day window: 6:30 AM IST through now (see
-    TT_routes.TRADING_DAY_START_HOUR/MINUTE — the same boundary
-    ist_date_to_ns anchors PNL start-date filtering to, so a scheduled sync
-    and a PNL calculation always agree on what a given trading day covers).
-    Before 6:30am IST, that's still "yesterday's" trading day, so the window
-    starts at yesterday's 6:30am instead.
+    The current trading-day window: the configured trading-day start time
+    (TT_routes.TRADING_DAY_START_HOUR/MINUTE, env-configurable via
+    TRADING_DAY_START_TIME — the same boundary ist_date_to_ns anchors PNL
+    start-date filtering to, so a scheduled sync and a PNL calculation
+    always agree on what a given trading day covers) through now. Before
+    that time IST, that's still "yesterday's" trading day, so the window
+    starts at yesterday's start time instead.
     """
     from routes.TT_routes import TRADING_DAY_START_HOUR, TRADING_DAY_START_MINUTE
 
@@ -349,14 +350,15 @@ def _trading_day_window_ns() -> tuple[int, int, datetime, datetime]:
 
 def sync_all_accounts_fills(db: Session, tt_client) -> dict:
     """
-    Re-fetch every account's fills for the whole current trading day (6:30am
-    IST through now) and save any new ones. This is what the 20-minute
-    background scheduler calls (see main.py) to keep fills — and therefore
-    /api/pnl/overview, which reads straight from the fills table — up to
-    date without any manual action on the Fills page.
+    Re-fetch every account's fills for the whole current trading day (the
+    configured trading-day start time IST through now) and save any new
+    ones. This is what the 20-minute background scheduler calls (see
+    main.py) to keep fills — and therefore /api/pnl/overview, which reads
+    straight from the fills table — up to date without any manual action on
+    the Fills page.
 
     The window is intentionally NOT incremental (not "since last sync") —
-    every cycle re-requests the full 6:30am-to-now range. TT can occasionally
+    every cycle re-requests the full window. TT can occasionally
     drop a fill from a single response, so re-fetching the whole window each
     time and relying on dedup (see _is_duplicate_fill) to skip what's
     already stored is what actually catches those drops on a later poll.

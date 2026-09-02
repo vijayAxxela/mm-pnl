@@ -33,6 +33,10 @@ class PNLOverviewRow(BaseModel):
     product_symbol: str
     contract: str
     instrument_id: str
+    # Today's activity only (current trading day, same boundary the fill-sync
+    # scheduler uses — TRADING_DAY_START_TIME), NOT the full pnl_start_date
+    # history. open_qty below stays cumulative — buy_qty - sell_qty will not
+    # generally equal open_qty, by design.
     buy_qty: float
     sell_qty: float
     open_qty: float
@@ -270,6 +274,29 @@ def _get_or_cache_instrument(db: Session, tt_client, instrument_id: str) -> Prod
         family = _get_or_cache_product_family(db, tt_client, product_id)
         currency_id = family.currency_id
 
+    # TT's tickValue is sometimes wrong — confirmed on HKEX GDU, where TT
+    # returns the per-gram tick amount (0.01) instead of the true
+    # per-contract value (pointValue x tickSize = 1000 x 0.01 = 10): it
+    # never applied the contract's unit-size multiplier. The correct
+    # per-contract tick value should always equal pointValue x tickSize, so
+    # whenever TT's raw figure disagrees with that, trust the computed one
+    # instead and flag the row as adjusted.
+    raw_tick_value = instrument.get('tickValue')
+    point_value = instrument.get('pointValue')
+    tick_size = instrument.get('tickSize')
+
+    tick_value = raw_tick_value
+    tick_value_adjusted = False
+    if point_value is not None and tick_size is not None:
+        computed_tick_value = point_value * tick_size
+        if raw_tick_value is None or abs(computed_tick_value - raw_tick_value) > 1e-9:
+            tick_value = computed_tick_value
+            tick_value_adjusted = True
+            logger.warning(
+                f"Instrument {instrument_id} ({instrument.get('alias')}): TT tickValue={raw_tick_value!r} "
+                f"disagrees with pointValue*tickSize={computed_tick_value!r} — using the computed value."
+            )
+
     product = Product(
         alias=instrument.get('alias'),
         displayFactor=instrument.get('displayFactor'),
@@ -290,10 +317,11 @@ def _get_or_cache_instrument(db: Session, tt_client, instrument_id: str) -> Prod
         securityId=instrument.get('securityId'),
         seriesTermId=instrument.get('seriesTermId'),
         term=instrument.get('term'),
-        tickSize=instrument.get('tickSize'),
+        tickSize=tick_size,
         tickSizeDenominator=instrument.get('tickSizeDenominator'),
         tickSizeNumerator=instrument.get('tickSizeNumerator'),
-        tickValue=instrument.get('tickValue'),
+        tickValue=tick_value,
+        tick_value_adjusted=tick_value_adjusted,
         currency_id=currency_id,
         raw=instrument
     )
@@ -320,12 +348,20 @@ def _compute_pnl_rows(db: Session, tt_client) -> List[dict]:
     from TT at most once per rate day — see TT_routes.get_daily_usd_rate).
     """
     from routes.TT_routes import ist_date_to_ns, get_daily_usd_rate
+    from routes.fills import _trading_day_window_ns
 
     accounts = db.query(Account).all()
     if not accounts:
         return []
 
     market_names = {m.tt_market_id: m.name for m in db.query(Market).all()}
+
+    # Buy/Sell Qty are today's activity only (same trading-day boundary the
+    # fill-sync scheduler uses — TRADING_DAY_START_TIME), not the full
+    # pnl_start_date-scoped history everything else here uses. Net stays
+    # cumulative, computed from the FIFO open position below as always.
+    today_start_ns, _, _, _ = _trading_day_window_ns()
+    today_start_str = str(today_start_ns)
 
     results = []
 
@@ -387,8 +423,9 @@ def _compute_pnl_rows(db: Session, tt_client) -> List[dict]:
             # the position and opens new lots on the other side.
             sorted_fills = sorted(instrument_fills, key=lambda f: (f.transact_time, f.id))
 
-            buy_qty = sum(f.last_qty for f in instrument_fills if f.side == 1)
-            sell_qty = sum(f.last_qty for f in instrument_fills if f.side == 2)
+            today_fills = [f for f in instrument_fills if f.transact_time >= today_start_str]
+            buy_qty = sum(f.last_qty for f in today_fills if f.side == 1)
+            sell_qty = sum(f.last_qty for f in today_fills if f.side == 2)
 
             open_lots = deque()  # [[qty, price], ...] — all same side while non-empty
             open_side = 0  # 1 = long, -1 = short, 0 = flat
@@ -473,8 +510,9 @@ def snapshot_day_open_pnl(db: Session, tt_client) -> dict:
     kept up to date at snapshot time, so it's deliberately left out until
     that changes.
 
-    Called once daily, 15 minutes after the trading day starts (6:30 AM IST
-    + 15min = 6:45 AM IST — see main._daily_snapshot_loop), so the PNL page
+    Called once daily, 15 minutes after the trading day starts (see
+    TT_routes.TRADING_DAY_START_HOUR/MINUTE, env-configurable via
+    TRADING_DAY_START_TIME, and main._daily_snapshot_loop), so the PNL page
     can show each contract's "Day Open PNL" as a reference point for
     movement since the day began. Upserts on (account_id, instrument_id,
     snapshot_date), so re-running for the same day is safe/idempotent.
