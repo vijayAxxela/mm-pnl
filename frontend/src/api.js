@@ -60,4 +60,13 @@ export const api = {
   // UI state (shared globally — no per-user accounts in this app)
   getUiState: (key) => get(`/api/ui-state/${encodeURIComponent(key)}`),
   setUiState: (key, value) => put(`/api/ui-state/${encodeURIComponent(key)}`, { value }),
+
+  // Loss alerts
+  getAlertSettings: () => get("/api/alerts/settings"),
+  updateAlertSettings: (enabled, soundAlertStep, emailAlertStep) =>
+    put("/api/alerts/settings", { enabled, sound_alert_step: soundAlertStep, email_alert_step: emailAlertStep }),
+  updateAlertEnabled: (enabled) => put("/api/alerts/settings/enabled", { enabled }),
+  listAlertEmails: () => get("/api/alerts/emails"),
+  addAlertEmail: (email) => post("/api/alerts/emails", { email }),
+  deleteAlertEmail: (id) => del(`/api/alerts/emails/${id}`),
 };

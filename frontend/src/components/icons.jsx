@@ -15,4 +15,5 @@ export {
   ChevronRight,
   CalendarDays,
   ArrowRight,
+  Pencil,
 } from "lucide-react";

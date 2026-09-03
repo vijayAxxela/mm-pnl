@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { NavLink, Route, Routes, Navigate } from "react-router-dom";
 import AccountsPage from "./pages/AccountsPage.jsx";
 import PnlPage from "./pages/PnlPage.jsx";
 import FillsPage from "./pages/FillsPage.jsx";
 import LastSyncedBadge from "./components/LastSyncedBadge.jsx";
+import { useLossAlertSound } from "./utils/useLossAlertSound.js";
 
 const links = [
   { to: "/pnl", label: "PNL" },
@@ -11,6 +13,15 @@ const links = [
 ];
 
 export default function App() {
+  const [lossToast, setLossToast] = useState(null);
+
+  // Global — fires regardless of which page is open, since a combined-loss
+  // alert matters no matter what the user's currently looking at.
+  useLossAlertSound((message) => {
+    setLossToast(message);
+    setTimeout(() => setLossToast(null), 15000);
+  });
+
   return (
     <div className="app">
       <header className="topbar">
@@ -32,6 +43,19 @@ export default function App() {
         </nav>
         <LastSyncedBadge />
       </header>
+
+      {lossToast && (
+        <div className="loss-toast" role="alert">
+          <span>
+            Combined loss since day open has reached <strong>{lossToast.threshold.toFixed(2)}</strong> (currently{" "}
+            {lossToast.loss.toFixed(2)})
+          </span>
+          <button type="button" className="loss-toast-dismiss" onClick={() => setLossToast(null)} aria-label="Dismiss">
+            ×
+          </button>
+        </div>
+      )}
+
       <main className="main">
         <Routes>
           <Route path="/" element={<Navigate to="/pnl" replace />} />

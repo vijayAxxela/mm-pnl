@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from database.db import init_db, get_db, SessionLocal
-from routes import accounts, products, pnl, fills, ui_state, ws
+from routes import accounts, products, pnl, fills, ui_state, ws, alerts
 from routes.TT_routes import TTClient, IST, TRADING_DAY_START_HOUR, TRADING_DAY_START_MINUTE
 from datetime import datetime, timedelta
 import asyncio
@@ -54,8 +54,10 @@ tt_client = TTClient(
 def _run_scheduled_fill_sync():
     """Runs in a worker thread (see _fill_sync_loop) — sync_all_accounts_fills
     is synchronous (requests + a sync SQLAlchemy session), so it must not run
-    directly on the event loop. Returns the new last_synced_at on success (so
-    the caller can push it to connected clients), or None on failure."""
+    directly on the event loop. Returns (last_synced_at, alert_result):
+    last_synced_at is None on failure; alert_result is whatever
+    alerts.check_and_fire_loss_alerts returned (None if nothing fired, or
+    the sync itself failed so there's nothing new to check)."""
     db = SessionLocal()
     try:
         result = fills.sync_all_accounts_fills(db, tt_client)
@@ -67,23 +69,34 @@ def _run_scheduled_fill_sync():
         for r in result["results"]:
             if r["status"] == "error":
                 logger.warning(f"  {r['account_name']}: {r['detail']}")
-        return app.state.last_synced_at
+
+        # Runs synchronously right here — after every fill sync, once a
+        # Day Open snapshot exists for today (see the function's own
+        # docstring for why it no-ops before that). Any sound alert to
+        # push gets bubbled back up for _fill_sync_loop to broadcast on
+        # the actual event loop; the email (if any) is already sent by
+        # the time this returns.
+        alert_result = alerts.check_and_fire_loss_alerts(db, tt_client)
+
+        return app.state.last_synced_at, alert_result
     except Exception as e:
         logger.error(f"Scheduled fill sync failed: {e}")
-        return None
+        return None, None
     finally:
         db.close()
 
 
 async def _fill_sync_loop():
     while True:
-        last_synced_at = await asyncio.to_thread(_run_scheduled_fill_sync)
+        last_synced_at, alert_result = await asyncio.to_thread(_run_scheduled_fill_sync)
         if last_synced_at is not None:
             # Push to every connected client — this is what lets the PNL
             # page (and anything else listening) update itself the moment
             # fills actually change, instead of only on a manual reload or
             # a fixed poll interval.
             await ws.broadcast({"type": "fills_synced", "last_synced_at": last_synced_at.isoformat()})
+        if alert_result and alert_result.get("sound_alert"):
+            await ws.broadcast(alert_result["sound_alert"])
         await asyncio.sleep(FILL_SYNC_INTERVAL_SECONDS)
 
 
@@ -200,6 +213,7 @@ app.include_router(pnl.router, prefix="/api/pnl", tags=["PNL"])
 app.include_router(fills.router, prefix="/api/fills", tags=["Fills"])
 app.include_router(ui_state.router, prefix="/api/ui-state", tags=["UI State"])
 app.include_router(ws.router, prefix="/ws", tags=["WebSocket"])
+app.include_router(alerts.router, prefix="/api/alerts", tags=["Alerts"])
 
 @app.get("/")
 async def root():

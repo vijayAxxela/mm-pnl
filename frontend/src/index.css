@@ -154,6 +154,29 @@ a:focus-visible {
   letter-spacing: 0.06em;
 }
 
+.loss-toast {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  background: color-mix(in srgb, var(--color-destructive) 20%, var(--color-elevated));
+  border-bottom: 1px solid var(--color-destructive);
+  color: var(--color-foreground);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.loss-toast-dismiss {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 var(--space-2);
+}
+
 .topbar-nav {
   display: flex;
   align-items: center;
@@ -219,6 +242,68 @@ a:focus-visible {
   margin: 0;
 }
 
+/* ---------- toggle switch ---------- */
+
+.switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  user-select: none;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.switch-track {
+  width: 34px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-strong);
+  transition: background-color 120ms, border-color 120ms;
+}
+
+.switch-track::after {
+  content: "";
+  display: block;
+  width: 14px;
+  height: 14px;
+  margin: 2px;
+  border-radius: 50%;
+  background: var(--color-muted-foreground);
+  transition: transform 120ms;
+}
+
+.switch input:checked + .switch-track {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.switch input:checked + .switch-track::after {
+  background: #06170c;
+  transform: translateX(14px);
+}
+
+.switch input:focus-visible + .switch-track {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.switch-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--color-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 /* ---------- panels ---------- */
 
 .panel {
@@ -280,6 +365,63 @@ select:hover {
 
 input::placeholder {
   color: var(--color-muted-foreground);
+}
+
+.neg-input {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  height: var(--control-h);
+  padding: 0 var(--space-3);
+  gap: 1px;
+  transition: border-color 120ms, background-color 120ms;
+}
+
+.neg-input:hover {
+  border-color: var(--color-muted-foreground);
+  background: var(--color-surface-2);
+}
+
+.neg-input:focus-within {
+  border-color: var(--color-accent);
+}
+
+.neg-input-sign {
+  color: var(--color-foreground);
+  font-family: "Fira Code", ui-monospace, monospace;
+  font-size: 13px;
+}
+
+.neg-input input {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  height: auto;
+  min-width: 6ch;
+  -moz-appearance: textfield;
+}
+
+.neg-input input:hover {
+  background: transparent;
+}
+
+.neg-input:has(input[readonly]) {
+  border-color: transparent;
+  background: transparent;
+}
+
+.neg-input input[readonly] {
+  color: var(--color-muted-foreground);
+  cursor: default;
+}
+
+.neg-input input::-webkit-outer-spin-button,
+.neg-input input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .btn {

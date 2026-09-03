@@ -324,6 +324,42 @@ class DailyPnlSnapshot(Base):
     )
 
 
+class AlertSettings(Base):
+    """
+    Single-row (id=1) config for the combined-loss alert system (see
+    routes/alerts.check_and_fire_loss_alerts, called after every scheduled
+    fill sync in main.py). "Loss" = current combined realized PNL minus the
+    combined Day Open PNL baseline, summed across every account — a sound
+    alert (pushed over the websocket) fires each time that loss crosses a
+    NEW higher multiple of sound_alert_step; an email fires each time it
+    crosses a new higher multiple of email_alert_step. Both are step
+    trackers, not simple threshold checks — see last_sound_threshold/
+    last_email_threshold, which record the highest step already alerted on
+    so a loss sitting between two steps (e.g. 700, between the 500 and
+    1000 steps) never re-fires until it actually reaches the next one.
+    Resets (both last_*_threshold back to 0) whenever `trading_day` no
+    longer matches the current trading day, so each day starts fresh.
+    """
+    __tablename__ = "alert_settings"
+
+    id = Column(Integer, primary_key=True)
+    enabled = Column(Boolean, nullable=False, default=True)
+    sound_alert_step = Column(Float, nullable=False, default=500.0)
+    email_alert_step = Column(Float, nullable=False, default=1000.0)
+    trading_day = Column(String, nullable=True)  # YYYY-MM-DD the thresholds below apply to
+    last_sound_threshold = Column(Float, nullable=False, default=0.0)
+    last_email_threshold = Column(Float, nullable=False, default=0.0)
+
+
+class AlertEmail(Base):
+    """One recipient for the loss-alert email (see AlertSettings)."""
+    __tablename__ = "alert_emails"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, nullable=False, unique=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class TTAccountCache(Base):
     """
     Write-through cache of every account TT returns for this company (not
