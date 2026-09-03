@@ -413,12 +413,20 @@ export default function PnlTree({ rows }) {
 
   const filteredRows = useMemo(
     () =>
-      rows.filter((row) =>
-        LEVEL_FIELDS.every((field, i) => {
-          const selected = columnFilters[i];
-          return !selected || selected.has(String(row[field]));
-        }),
-      ),
+      rows
+        // No activity today and no open position — this is a leftover
+        // contract row (e.g. a calendar spread from a prior day's roll)
+        // with nothing intraday to show. Dropped before aggregation, not
+        // just hidden, so its PNL doesn't get counted into parent totals
+        // either — this dashboard tracks intraday PNL, not carried-over
+        // positions from previous days.
+        .filter((row) => !(row.buy_qty === 0 && row.sell_qty === 0 && row.open_qty === 0))
+        .filter((row) =>
+          LEVEL_FIELDS.every((field, i) => {
+            const selected = columnFilters[i];
+            return !selected || selected.has(String(row[field]));
+          }),
+        ),
     [rows, columnFilters],
   );
 
