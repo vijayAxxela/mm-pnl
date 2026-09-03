@@ -8,6 +8,14 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB:-tt_pnl_dashboard}
+    ports:
+      # Localhost-only (127.0.0.1 prefix, not just "5434:5432") — lets a
+      # local pgAdmin/psql on this machine connect for inspection without
+      # exposing Postgres to the rest of the network. 5434 (not 5432 or
+      # 5433) since 5432 is the native local Postgres install and 5433 is
+      # already taken by the structurehub-prod stack's db on this same
+      # machine (see structurehub/docker-compose.yml).
+      - "127.0.0.1:5434:5432"
     volumes:
       # Named volume — survives `docker compose up -d --build` on every
       # redeploy. Only `docker compose down -v` (never run by the deploy
