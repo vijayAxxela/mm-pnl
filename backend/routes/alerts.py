@@ -211,14 +211,21 @@ def check_and_fire_loss_alerts(db: Session, tt_client) -> Optional[dict]:
     threshold crossed).
     """
     from routes.pnl import _compute_pnl_rows
-    from routes.TT_routes import IST
-    from datetime import datetime
+    from routes.fills import _trading_day_window_ns
 
-    today = datetime.now(IST).strftime('%Y-%m-%d')
+    # The trading day's own calendar date, NOT plain today's-date-at-midnight
+    # — the trading day rolls over at TRADING_DAY_START_TIME (e.g. 6:00 AM
+    # IST), same boundary snapshot_day_open_pnl/_compute_pnl_rows use, so
+    # between midnight and that time this still needs to check against
+    # YESTERDAY's snapshot/thresholds (still the current trading day)
+    # instead of going dormant early looking for today's, which hasn't been
+    # taken yet.
+    _, _, window_start, _ = _trading_day_window_ns()
+    today = window_start.strftime('%Y-%m-%d')
 
-    # No baseline yet today — nothing to measure a "loss since day open"
-    # against, so skip entirely rather than alerting off a stale/zeroed
-    # previous day's snapshot.
+    # No baseline yet for the current trading day — nothing to measure a
+    # "loss since day open" against, so skip entirely rather than alerting
+    # off a stale/zeroed previous day's snapshot.
     has_snapshot_today = db.query(DailyPnlSnapshot).filter(DailyPnlSnapshot.snapshot_date == today).first()
     if not has_snapshot_today:
         return None
