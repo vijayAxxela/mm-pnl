@@ -24,6 +24,7 @@ import logging
 import os
 import re
 import smtplib
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from typing import List, Optional
 
@@ -149,7 +150,12 @@ def delete_alert_email(email_id: int, db: Session = Depends(get_db)):
 
 
 def _send_loss_email(
-    recipients: List[str], account_names: List[str], loss: float, current_total: float, day_open_total: float
+    recipients: List[str],
+    account_names: List[str],
+    loss: float,
+    current_total: float,
+    day_open_total: float,
+    trading_day: str,
 ):
     """
     Best-effort — a missing/misconfigured SMTP setup logs a warning and is
@@ -172,14 +178,36 @@ def _send_loss_email(
 
     names = ", ".join(account_names) if account_names else "Accounts"
 
-    current_time = datetime.now(IST).strftime("%H:%M")
+    now = datetime.now(IST)
+    current_date = now.strftime("%Y-%m-%d")
+    current_time = now.strftime("%H:%M")
     day_open_time = f"{TRADING_DAY_START_HOUR:02d}:{TRADING_DAY_START_MINUTE:02d}"
 
-    body = (
-        f"Current ({current_time}) P&L: {current_total:.2f}\n"
-        f"Day Open ({day_open_time}) P&L: {day_open_total:.2f}\n"
+    def highlight(value: float) -> str:
+        # Highlighted like a spreadsheet cell — colored background carries
+        # the sign (red = loss, green = gain) so the number reads at a
+        # glance instead of needing to parse the sign character.
+        bg = "#ffd2d6" if value < 0 else "#d2f5dc" if value > 0 else "#eeeeee"
+        fg = "#8a1c26" if value < 0 else "#166534" if value > 0 else "#555555"
+        return (
+            f'<b style="background:{bg};color:{fg};padding:2px 8px;'
+            f'border-radius:4px;font-family:monospace;">{value:.2f}</b>'
+        )
+
+    text_body = (
+        f"Current ({current_date} {current_time}) P&L: {current_total:.2f}\n"
+        f"Day Open ({trading_day} {day_open_time}) P&L: {day_open_total:.2f}\n"
     )
-    msg = MIMEText(body)
+    html_body = (
+        '<div style="font-family:Arial,sans-serif;font-size:14px;color:#111;">'
+        f"<p>Current ({current_date} {current_time}) P&amp;L: {highlight(current_total)}</p>"
+        f"<p>Day Open ({trading_day} {day_open_time}) P&amp;L: {highlight(day_open_total)}</p>"
+        "</div>"
+    )
+
+    msg = MIMEMultipart("alternative")
+    msg.attach(MIMEText(text_body, "plain"))
+    msg.attach(MIMEText(html_body, "html"))
     msg["Subject"] = f"{names} Loss Alert : -{loss:.2f}"
     msg["From"] = from_addr
     msg["To"] = ", ".join(recipients)
@@ -273,7 +301,7 @@ def check_and_fire_loss_alerts(db: Session, tt_client) -> Optional[dict]:
             settings.last_email_threshold = email_level
             recipients = [e.email for e in db.query(AlertEmail).all()]
             account_names = list(dict.fromkeys(r["account_name"] for r in rows))
-            _send_loss_email(recipients, account_names, loss, current_total, day_open_total)
+            _send_loss_email(recipients, account_names, loss, current_total, day_open_total, today)
             result["email_alert_threshold"] = email_level
             logger.warning(f"Loss email alert: combined loss {loss:.2f} crossed {email_level}")
 
