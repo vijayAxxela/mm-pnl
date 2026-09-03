@@ -1,13 +1,19 @@
 # database/db.py
 import json
 import os
+from pathlib import Path
 from sqlalchemy import create_engine, Column, Integer, String, Float, BigInteger, ForeignKey, UniqueConstraint , DateTime, Boolean, Text, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 from dotenv import load_dotenv
 
-load_dotenv()
+# Always the repo-root .env — one file shared by local (non-Docker) dev and
+# local `docker compose up` alike (Docker itself never reads this; its
+# vars come from --env-file/compose `environment:`). Loaded by absolute
+# path rather than load_dotenv()'s CWD-search default, so this works the
+# same whether main.py is launched from backend/ or the repo root.
+load_dotenv(Path(__file__).resolve().parent.parent.parent / ".env")
 
 
 def _load_database_url() -> str:

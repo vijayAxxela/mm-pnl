@@ -42,6 +42,14 @@ services:
       TRADING_DAY_START_TIME: ${TRADING_DAY_START_TIME:-06:00}
       PORT: 8020
       HOST: 0.0.0.0
+      # Loss-alert emails (see backend/routes/alerts.py) — unset/empty
+      # SMTP_HOST just logs a warning and skips sending, so these are safe
+      # to leave blank in an env file that doesn't need email alerts.
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-}
     depends_on:
       db:
         condition: service_healthy
