@@ -8,8 +8,9 @@ const LEVEL_FIELDS = ["account_name", "exchange", "product_symbol", "contract"];
 const HEADERS = ["Account", "Exchange", "Product", "Contract"];
 
 // Account, Exchange, Product, Contract, Buy Qty, Sell Qty, Net, Total PNL,
-// Unrealized PNL, Realized PNL, Current Price, Avg Open Price, Day Open PNL
-const DEFAULT_COL_WIDTHS = ["12%", "9%", "9%", "12%", "7%", "7%", "7%", "7%", "6%", "6%", "6%", "6%", "6%"];
+// Change from Open, Unrealized PNL, Realized PNL, Current Price,
+// Avg Open Price, Day Open PNL
+const DEFAULT_COL_WIDTHS = ["11%", "8%", "8%", "11%", "6%", "6%", "6%", "7%", "9%", "6%", "6%", "5%", "5%", "6%"];
 
 // This app has no per-user accounts, so the tree's expanded nodes / column
 // filters / sort / manually-entered current prices are persisted globally
@@ -125,7 +126,16 @@ function buildTree(rows, currentPrices) {
   return root;
 }
 
-// sortSpec: null | { type: "net"|"pnl"|"unrealized"|"total"|"dayOpen", dir } | { type: "level", level, dir }
+// Change from Open = Total PNL (realized + unrealized) minus Day Open PNL —
+// the same "loss since day open" basis the combined-loss alert system uses
+// (see backend routes/alerts.py), just per-row instead of summed across
+// every account. Day Open PNL is realized-only (see snapshot_day_open_pnl),
+// so this is the only place in the tree a real day-open baseline exists.
+function changeFromOpenOf(node) {
+  return node.realized_pnl + node.unrealized_pnl - node.day_open_pnl;
+}
+
+// sortSpec: null | { type: "net"|"pnl"|"unrealized"|"total"|"dayOpen"|"changeFromOpen", dir } | { type: "level", level, dir }
 function applySort(node, sortSpec) {
   if (!sortSpec || node.children.length === 0) return node;
   let children = node.children.map((c) => applySort(c, sortSpec));
@@ -139,6 +149,10 @@ function applySort(node, sortSpec) {
   } else if (sortSpec.type === "total") {
     const totalOf = (n) => n.realized_pnl + n.unrealized_pnl;
     children = [...children].sort((a, b) => (sortSpec.dir === "asc" ? totalOf(a) - totalOf(b) : totalOf(b) - totalOf(a)));
+  } else if (sortSpec.type === "changeFromOpen") {
+    children = [...children].sort((a, b) =>
+      sortSpec.dir === "asc" ? changeFromOpenOf(a) - changeFromOpenOf(b) : changeFromOpenOf(b) - changeFromOpenOf(a),
+    );
   } else if (sortSpec.type === "level" && sortSpec.level === childLevel) {
     children = [...children].sort((a, b) =>
       sortSpec.dir === "asc" ? String(a.label).localeCompare(String(b.label)) : String(b.label).localeCompare(String(a.label)),
@@ -229,6 +243,7 @@ function ColumnResizeHandle({ onToggle }) {
 function NodeCells({ node, toggleBtn, onPriceChange }) {
   const colIndex = node.level === -1 ? 0 : node.level;
   const totalPnl = node.realized_pnl + node.unrealized_pnl;
+  const change = changeFromOpenOf(node);
 
   return (
     <>
@@ -255,6 +270,9 @@ function NodeCells({ node, toggleBtn, onPriceChange }) {
       </td>
       <td style={{ textAlign: "right" }}>
         <Badge value={totalPnl} text={formatMoney(totalPnl)} />
+      </td>
+      <td style={{ textAlign: "right" }} className="mono">
+        <Badge value={change} text={formatMoney(change)} />
       </td>
       <td style={{ textAlign: "right" }}>
         <Badge value={node.unrealized_pnl} text={formatMoney(node.unrealized_pnl)} bare />
@@ -566,6 +584,20 @@ export default function PnlTree({ rows }) {
                   type="button"
                   className="th-sort"
                   style={{ justifyContent: "flex-end" }}
+                  onClick={() => toggleSimpleSort("changeFromOpen")}
+                >
+                  Change from Open
+                  {sortSpec?.type === "changeFromOpen" && (
+                    <span className="th-sort-indicator">{sortSpec.dir === "asc" ? "▲" : "▼"}</span>
+                  )}
+                </button>
+                <ColumnResizeHandle onToggle={toggleContentFit} />
+              </th>
+              <th>
+                <button
+                  type="button"
+                  className="th-sort"
+                  style={{ justifyContent: "flex-end" }}
                   onClick={() => toggleSimpleSort("unrealized")}
                 >
                   Unrealized PNL
@@ -626,7 +658,7 @@ export default function PnlTree({ rows }) {
             ))}
             {displayRoot.children.length === 0 && (
               <tr>
-                <td colSpan={13}>
+                <td colSpan={14}>
                   <div className="empty-state">
                     <p className="status">No rows match the current filters.</p>
                     <button type="button" className="link-btn" onClick={() => setColumnFilters({})}>

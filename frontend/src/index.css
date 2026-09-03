@@ -1267,13 +1267,13 @@ tr.pnl-row.selected:hover {
 }
 
 .pnl-badge.pos {
-  background: color-mix(in srgb, var(--color-accent) 18%, transparent);
-  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 55%, transparent);
+  color: #ffffff;
 }
 
 .pnl-badge.neg {
-  background: color-mix(in srgb, var(--color-destructive) 18%, transparent);
-  color: var(--color-destructive);
+  background: color-mix(in srgb, var(--color-destructive) 55%, transparent);
+  color: #ffffff;
 }
 
 .pnl-badge.zero {
@@ -1282,10 +1282,23 @@ tr.pnl-row.selected:hover {
 
 /* Unrealized/Realized/Day Open PNL — text color carries the sign, no pill
    background (Net and Total PNL keep the filled badge, so those two
-   "headline" numbers still stand out at a glance). */
+   "headline" numbers still stand out at a glance). Colors are lightened
+   relative to the badge versions (color-mix toward white) — plain colored
+   text with nothing behind it needs more contrast than the same color
+   sitting on its own tinted pill to stay legible on the darker/alternating
+   row backgrounds. */
 .pnl-badge.bare {
   padding: 3px 0;
   background: none;
+  font-weight: 700;
+}
+
+.pnl-badge.bare.pos {
+  color: color-mix(in srgb, var(--color-accent) 80%, white);
+}
+
+.pnl-badge.bare.neg {
+  color: color-mix(in srgb, var(--color-destructive) 82%, white);
 }
 
 .pnl-price-input {
