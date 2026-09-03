@@ -18,14 +18,22 @@ jobs:
   deploy:
     runs-on: self-hosted
     steps:
+      # actions/checkout defaults to `git clean -ffdx` before checking out,
+      # which removes ALL untracked files in the checkout dir — including
+      # gitignored ones. A .env sitting at the repo root would get wiped on
+      # every single run, so the real one lives outside the checkout
+      # entirely (see DEPLOY_ENV_FILE below) and is never touched by this.
       - uses: actions/checkout@v4
 
-      # docker-compose.yml pulls its secrets/config from a root .env file
-      # that docker compose auto-loads — that file lives only on the
-      # runner machine (created once from .env.example, gitignored, never
-      # touched by this workflow) and is NOT part of the checkout.
+      # Created once, manually, on the runner machine — NOT part of the
+      # checkout, deliberately outside the workspace so `actions/checkout`'s
+      # clean step can never remove it. Copy .env.example there and fill in
+      # real values:
+      #   cp .env.example C:\actions-runner-mmpnl\deploy.env
       - name: Build and deploy
-        run: docker compose up -d --build
+        env:
+          DEPLOY_ENV_FILE: C:\actions-runner-mmpnl\deploy.env
+        run: docker compose --env-file "$env:DEPLOY_ENV_FILE" up -d --build
 
       # Alembic runs inside the backend container's entrypoint on every
       # start (see backend/entrypoint.sh) — migrations only ever ADD

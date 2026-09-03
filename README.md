@@ -14,7 +14,10 @@ docker compose up -d --build
 
 Postgres data lives in the `pgdata` named volume — redeploying (`docker compose up -d --build`) rebuilds the app containers and re-runs Alembic migrations, but never touches that volume. Only `docker compose down -v` removes it.
 
-Pushing to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) on a self-hosted GitHub Actions runner installed on the deploy machine, which does exactly the `docker compose up -d --build` above.
+Pushing to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) on a self-hosted GitHub Actions runner installed on the deploy machine, which does exactly the `docker compose up -d --build` above — with one difference: `actions/checkout` wipes untracked files (including gitignored ones like `.env`) from the checkout directory on every run, so the workflow's `.env` lives **outside** the checkout entirely, at a fixed path (`C:\actions-runner-mmpnl\deploy.env` for this repo's runner — see `DEPLOY_ENV_FILE` in `deploy.yml`). Set that one up once, the same way as the manual command above:
+```
+cp .env.example C:\actions-runner-mmpnl\deploy.env
+```
 
 GitHub Actions self-hosted runners are registered per-repository (or per-org, but that needs org admin) — a runner registered against one repo won't pick up another repo's workflow jobs. If the deploy machine already runs a different runner (as ours does, for StructureHub — see `C:\actions-runner`), install a **second, separate** runner instance registered specifically against `mm-pnl` (its own folder + its own registration token from this repo's Settings → Actions → Runners) rather than reusing the existing one. The Compose stack is named `mm-pnl` (see `docker-compose.yml`'s top-level `name:`) so it's unambiguous in `docker compose ls`/`docker ps` output next to any other project on the same box, and its ports (8020/5190) and volumes are fully isolated from whatever else is already running there.
 
