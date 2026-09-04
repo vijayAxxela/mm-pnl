@@ -158,6 +158,7 @@ def sync_fills(
         synced_count = 0
         skipped_count = 0
         updated_count = 0
+        seen = set()  # (exec_id, row_hash) pairs staged so far in this batch
 
         for account in accounts_with_products:
             # Fetch fills scoped to this account and time window only (TT-side
@@ -219,11 +220,18 @@ def sync_fills(
 
                 # Check if fill already exists
                 exec_id = _get_exec_id(fill)
-                if _is_duplicate_fill(db, exec_id, _compute_row_hash(fill)):
+                row_hash = _compute_row_hash(fill)
+                # Same intra-batch overlap guard as _fetch_and_save_fills —
+                # nothing is flushed until the commit below.
+                if (exec_id, row_hash) in seen:
+                    skipped_count += 1
+                    continue
+                if _is_duplicate_fill(db, exec_id, row_hash):
                     skipped_count += 1
                     continue
 
                 db.add(_build_fill_record(account, fill))
+                seen.add((exec_id, row_hash))
                 synced_count += 1
                 
                 # Update position (FIFO)
@@ -273,8 +281,13 @@ def _compute_row_hash(fill: dict) -> str:
 
 
 def _is_duplicate_fill(db: Session, exec_id: str, row_hash: str) -> bool:
-    """A fill is skipped if either its exec_id or its full-row hash already exists."""
-    return db.query(Fill).filter((Fill.exec_id == exec_id) | (Fill.row_hash == row_hash)).first() is not None
+    """
+    exec_id alone isn't a safe duplicate signal — TT can reuse it across
+    genuinely different fills. Only drop a fill when an existing row matches
+    both exec_id AND row_hash (every column, since row_hash is a hash of the
+    full raw payload every column is built from).
+    """
+    return db.query(Fill).filter(Fill.exec_id == exec_id, Fill.row_hash == row_hash).first() is not None
 
 
 def _build_fill_record(account: Account, fill: dict) -> Fill:
@@ -376,12 +389,20 @@ def _fetch_and_save_fills(db: Session, tt_client, account: Account, start_ns: in
     range_fills.sort(key=lambda f: int(f.get('transactTime', '0')))
 
     saved_count = 0
+    seen = set()  # (exec_id, row_hash) pairs staged so far in this batch
     for fill in range_fills:
         exec_id = _get_exec_id(fill)
-        if _is_duplicate_fill(db, exec_id, _compute_row_hash(fill)):
+        row_hash = _compute_row_hash(fill)
+        # TT can return the same fill twice within one fetch (pagination
+        # overlap) — nothing is flushed until the caller's commit, so the DB
+        # check alone can't see fills already staged earlier in this batch.
+        if (exec_id, row_hash) in seen:
+            continue
+        if _is_duplicate_fill(db, exec_id, row_hash):
             continue
 
         db.add(_build_fill_record(account, fill))
+        seen.add((exec_id, row_hash))
         saved_count += 1
 
     return range_fills, saved_count

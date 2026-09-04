@@ -182,7 +182,10 @@ class Fill(Base):
     delta_qty = Column(Float)
     exch_leaves_qty = Column(Float)
     exch_order_assoc = Column(String)
-    exec_id = Column(String, unique=True, nullable=False, index=True)  # Unique identifier
+    # Not unique — TT can reuse an exec_id across genuinely different fills;
+    # the real "is this the same fill" check is row_hash (every column
+    # matching), enforced below and in the sync dedup logic.
+    exec_id = Column(String, nullable=False, index=True)
     exec_inst = Column(Integer)
     exec_type = Column(Integer)
     externally_created = Column(String)

@@ -195,20 +195,21 @@ def _send_loss_email(
         )
 
     text_body = (
-        f"Current ({current_date} {current_time}) P&L: {current_total:.2f}\n"
-        f"Day Open ({trading_day} {day_open_time}) P&L: {day_open_total:.2f}\n"
+        f"Today's Loss : {loss:.2f}\n"
+        # f"Current ({current_date} {current_time}) P&L: {current_total:.2f}\n"
+        # f"Day Open ({trading_day} {day_open_time}) P&L: {day_open_total:.2f}\n"
     )
     html_body = (
         '<div style="font-family:Arial,sans-serif;font-size:14px;color:#111;">'
-        f"<p>Current ({current_date} {current_time}) P&amp;L: {highlight(current_total)}</p>"
-        f"<p>Day Open ({trading_day} {day_open_time}) P&amp;L: {highlight(day_open_total)}</p>"
+        f"<p>Today's Loss ({current_date} {current_time}) P&amp;L: {highlight(loss)}</p>"
+        # f"<p>Day Open ({trading_day} {day_open_time}) P&amp;L: {highlight(day_open_total)}</p>"
         "</div>"
     )
 
     msg = MIMEMultipart("alternative")
     msg.attach(MIMEText(text_body, "plain"))
     msg.attach(MIMEText(html_body, "html"))
-    msg["Subject"] = f"{names} Loss Alert : -{loss:.2f}"
+    msg["Subject"] = f"Live Loss Alert : -{loss:.2f}"
     msg["From"] = from_addr
     msg["To"] = ", ".join(recipients)
 
