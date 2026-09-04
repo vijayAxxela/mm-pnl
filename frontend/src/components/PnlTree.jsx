@@ -342,18 +342,24 @@ function TreeRows({ node, expanded, toggle, onPriceChange, selectedKey, onSelect
       </tr>
       {hasChildren &&
         isExpanded &&
-        node.children.map((child, i) => (
-          <TreeRows
-            key={child.key}
-            node={child}
-            expanded={expanded}
-            toggle={toggle}
-            onPriceChange={onPriceChange}
-            selectedKey={selectedKey}
-            onSelect={onSelect}
-            siblingIndex={i}
-          />
-        ))}
+        node.children
+          // A contract with no buy/sell activity and a flat net position is
+          // just noise in the list — it still counts toward every parent's
+          // (including TOTAL's) totals via buildTree's aggregation above
+          // (unaffected by this), only the individual line is hidden.
+          .filter((child) => !(child.level === 3 && child.buy_qty === 0 && child.sell_qty === 0 && child.open_qty === 0))
+          .map((child, i) => (
+            <TreeRows
+              key={child.key}
+              node={child}
+              expanded={expanded}
+              toggle={toggle}
+              onPriceChange={onPriceChange}
+              selectedKey={selectedKey}
+              onSelect={onSelect}
+              siblingIndex={i}
+            />
+          ))}
     </>
   );
 }
@@ -429,12 +435,15 @@ export default function PnlTree({ rows }) {
     [rows],
   );
 
-  // Column filters only — this is the "everything that matches what the
-  // user asked to see" set, independent of today's activity. Used as the
-  // TOTAL row's own basis (see totalsNode below) so a hedge leg sitting
-  // flat in one account still counts toward the combined PNL even though
-  // its own line isn't worth showing in the list.
-  const columnFilteredRows = useMemo(
+  // Column filters only — every row that's built into the tree, so an
+  // account/exchange/product still shows up even when every one of its own
+  // CONTRACT-level rows has no activity today (e.g. a hedge leg parked flat
+  // in another account) — only individual zero-activity LEAF rows are
+  // hidden at render time (see TreeRows below), never whole accounts, and
+  // never from any total (a row with zero buy/sell/net can only have
+  // changed today via a fill, and it had none, so it always contributes
+  // exactly 0 to Change from Open regardless of whether it's shown).
+  const filteredRows = useMemo(
     () =>
       rows.filter((row) =>
         LEVEL_FIELDS.every((field, i) => {
@@ -445,43 +454,10 @@ export default function PnlTree({ rows }) {
     [rows, columnFilters],
   );
 
-  const filteredRows = useMemo(
-    () =>
-      // No activity today and no open position — this is a leftover
-      // contract row (e.g. a calendar spread from a prior day's roll, or
-      // the other leg of a cross-account hedge) with nothing intraday to
-      // show. Hidden from the list/tree, but NOT from the TOTAL row's PNL
-      // (see totalsNode) — a row with zero buy/sell/net can only have
-      // changed today via a fill, and it had none, so its contribution to
-      // Change from Open is always exactly 0 regardless; excluding it here
-      // only trims the list, it doesn't skew any total.
-      columnFilteredRows.filter((row) => !(row.buy_qty === 0 && row.sell_qty === 0 && row.open_qty === 0)),
-    [columnFilteredRows],
-  );
-
   const displayRoot = useMemo(
     () => applySort(buildTree(filteredRows, currentPrices), sortSpec),
     [filteredRows, sortSpec, currentPrices],
   );
-
-  // The TOTAL row's own figures come from EVERY column-filtered row, not
-  // just the ones with today's activity — see filteredRows above for why
-  // that's safe for Change from Open, but Realized/Day Open PNL themselves
-  // need the full portfolio (e.g. a hedge leg parked flat in another
-  // account) to mean anything as a combined number.
-  const totalsNode = useMemo(() => {
-    const node = makeNode("TOTAL", "TOTAL", -1);
-    for (const row of columnFilteredRows) {
-      const currentPrice = currentPrices[row.instrument_id];
-      node.buy_qty += row.buy_qty;
-      node.sell_qty += row.sell_qty;
-      node.open_qty += row.open_qty;
-      node.realized_pnl += row.realized_pnl;
-      node.unrealized_pnl += computeUnrealizedUsd(row, currentPrice);
-      node.day_open_pnl += row.day_open_pnl ?? 0;
-    }
-    return node;
-  }, [columnFilteredRows, currentPrices]);
 
   // Reveal matching branches when a filter is applied — but through the
   // normal toggle state (union, not an override), so the user can still
@@ -670,7 +646,7 @@ export default function PnlTree({ rows }) {
           </thead>
           <tbody>
             <TotalRow
-              node={totalsNode}
+              node={displayRoot}
               onPriceChange={handlePriceChange}
               selectedKey={selectedKey}
               onSelect={setSelectedKey}
