@@ -1,6 +1,7 @@
 # routes/pnl.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from pydantic import BaseModel
 from typing import List, Optional
 from database.db import get_db, Account, AccountProductSettings, Position, Product, ProductFamily, Fill, Market
@@ -249,7 +250,19 @@ def _get_or_cache_product_family(db: Session, tt_client, product_id: str) -> Pro
         raw=product_info
     )
     db.add(family)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        # Lost a race with another concurrent request caching the same
+        # product family (e.g. two PNL requests for different accounts that
+        # share a product, resolved in overlapping threads) — the other one
+        # already inserted this id first. Roll back this session's failed
+        # insert (leaving the session poisoned otherwise) and use theirs.
+        db.rollback()
+        existing = db.query(ProductFamily).filter(ProductFamily.id == product_id).first()
+        if existing:
+            return existing
+        raise
     db.refresh(family)
     return family
 
@@ -326,7 +339,15 @@ def _get_or_cache_instrument(db: Session, tt_client, instrument_id: str) -> Prod
         raw=instrument
     )
     db.add(product)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        # Same concurrent-cache race as _get_or_cache_product_family above.
+        db.rollback()
+        existing = db.query(Product).filter(Product.id == instrument_id).first()
+        if existing:
+            return existing
+        raise
     db.refresh(product)
     return product
 
