@@ -167,13 +167,18 @@ class Fill(Base):
     account_name = Column(String, nullable=False, index=True)
     tt_account_id = Column(BigInteger, nullable=False, index=True)
     aggressor_indicator = Column(String)
-    algo_id = Column(BigInteger)
+    # String, not BigInteger — TT sent algoId=15312252192147810452 for
+    # LGBEE818 (fill sync crashed on this, confirmed 2026-09-04), which
+    # overflows Postgres's bigint range (max ~9.22e18). Neither algo_id nor
+    # curr_user_id is ever queried or used arithmetically, just stored —
+    # same treatment as instrument_id/exec_id below.
+    algo_id = Column(String)
     alloc_id = Column(String)
     avg_px = Column(Float)
     broker_id = Column(Integer)
     client_ip = Column(String)
     cum_qty = Column(Float)
-    curr_user_id = Column(BigInteger)
+    curr_user_id = Column(String)
     delta_qty = Column(Float)
     exch_leaves_qty = Column(Float)
     exch_order_assoc = Column(String)
