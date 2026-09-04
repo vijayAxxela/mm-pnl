@@ -438,6 +438,57 @@ class TTClient:
                 'message': str(e)
             }
 
+    def get_all_users(self) -> List[Dict]:
+        """
+        Get every TT user for this company (GET /ttuser/{env}/users) —
+        resolves a fill's curr_user_id to a real name (alias/first/last
+        name). Same 'lastPage'/'nextPageKey' pagination as get_all_accounts.
+        """
+        users_url = f'{self.base_url}/ttuser/{self.environment}/users'
+        headers = {'x-api-key': self.api_key, 'Authorization': self.bearer_token}
+
+        all_users = []
+        next_page_key = None
+        while True:
+            params = {'nextPageKey': next_page_key} if next_page_key else {}
+            user_map = self.api_request(users_url, headers, user_params=params)
+            all_users.extend(user_map.get('users', []))
+
+            last_page = str(user_map.get('lastPage', 'true')).lower() == 'true'
+            if last_page:
+                break
+            next_page_key = user_map.get('nextPageKey')
+            if not next_page_key:
+                break
+
+        self.logger.info(f"Retrieved {len(all_users)} users")
+        return all_users
+
+    def get_all_algos(self) -> List[Dict]:
+        """
+        Get every algo TT knows about for this company (GET
+        /ttpds/{env}/algos) — resolves a fill's algo_id to a real name.
+        """
+        algos_url = f'{self.base_url}/ttpds/{self.environment}/algos'
+        headers = {'x-api-key': self.api_key, 'Authorization': self.bearer_token}
+
+        all_algos = []
+        next_page_key = None
+        while True:
+            params = {'nextPageKey': next_page_key} if next_page_key else {}
+            algo_map = self.api_request(algos_url, headers, user_params=params)
+            all_algos.extend(algo_map.get('algos', []))
+
+            last_page = str(algo_map.get('lastPage', 'true')).lower() == 'true'
+            if last_page:
+                break
+            next_page_key = algo_map.get('nextPageKey')
+            if not next_page_key:
+                break
+
+        self.logger.info(f"Retrieved {len(all_algos)} algos")
+        return all_algos
+
     def get_positions(self):
 
         fill_url = f'{self.base_url}/ttmonitor/{self.environment}/position/'

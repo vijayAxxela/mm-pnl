@@ -1,57 +1,28 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../api.js";
-import DataTable from "../components/DataTable.jsx";
+import DataTable, { ExportMenu } from "../components/DataTable.jsx";
 import DatePickerField from "../components/DatePickerField.jsx";
 import { useClickOutside } from "../utils/useClickOutside.js";
 import { Search, Loader2, ArrowRight } from "../components/icons.jsx";
 
-// Put the columns traders care about first; any other field TT sends comes
-// after, in whatever order it first shows up.
-const PRIORITY_COLUMNS = [
-  "transactTime",
-  "instrumentId",
-  "securityDesc",
-  "side",
-  "lastQty",
-  "lastPx",
-  "execId",
-  "accountId",
-  "account",
+// Fixed set, in this order — see backend routes/fills.py's
+// format_fills_for_frontend, which already excludes per-leg spread rows
+// (multiLegReportingType == '2') and resolves exchange/contract/algo/user
+// names server-side. Nothing here is auto-derived from raw TT fields.
+const FILLS_COLUMNS = [
+  { key: "time", label: "Time" },
+  { key: "exchange", label: "Exchange" },
+  { key: "contract", label: "Contract" },
+  { key: "side", label: "B/S" },
+  { key: "price", label: "Price", align: "right" },
+  { key: "fill_qty", label: "FillQty", align: "right" },
+  { key: "account", label: "Account" },
+  { key: "manual_fill", label: "ManualFill", render: (f) => (f.manual_fill ? "Yes" : "No") },
+  { key: "algo_id", label: "AlgoId" },
+  { key: "curr_user_id", label: "CurrentUserId", render: (f) => f.curr_user_name || f.curr_user_id || "" },
+  { key: "order_id", label: "OrderId" },
+  { key: "parent_id", label: "ParentID" },
 ];
-
-function formatIstDateTime(nsValue) {
-  if (!nsValue) return "";
-  const ms = Number(nsValue) / 1_000_000;
-  if (!Number.isFinite(ms)) return String(nsValue);
-  return new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Kolkata",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-  }).format(new Date(ms));
-}
-
-function buildFillsColumns(fills) {
-  const allKeys = new Set();
-  fills.forEach((f) => Object.keys(f).forEach((k) => allKeys.add(k)));
-
-  const ordered = [
-    ...PRIORITY_COLUMNS.filter((k) => allKeys.has(k)),
-    ...[...allKeys].filter((k) => !PRIORITY_COLUMNS.includes(k)).sort(),
-  ];
-
-  return ordered.map((key) => {
-    if (key === "side") return { key, label: "side", render: (f) => (f.side === 1 ? "Buy" : "Sell") };
-    if (key === "transactTime") return { key, label: "time (IST)", render: (f) => formatIstDateTime(f.transactTime) };
-    if (key === "lastQty") return { key, label: "qty", align: "right" };
-    if (key === "lastPx") return { key, label: "price", align: "right" };
-    return key;
-  });
-}
 
 function todayIST() {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -148,8 +119,6 @@ export default function FillsPage() {
       .catch((e) => setError(e.message));
   }, []);
 
-  const fillsColumns = useMemo(() => (result ? buildFillsColumns(result.fills) : []), [result]);
-
   const handleFetch = async () => {
     if (!selectedAccount || !startDate || !endDate) return;
     if (endDate < startDate) {
@@ -168,16 +137,7 @@ export default function FillsPage() {
   };
 
   return (
-    <div className="page-fill">
-      <div className="page-header">
-        <h2>Fills</h2>
-        {result && (
-          <span className="status">
-            {result.total_fills} fill{result.total_fills === 1 ? "" : "s"} · {result.fills_saved} newly saved
-          </span>
-        )}
-      </div>
-
+    <div className="page-fill page-fill--fit">
       <div className="panel">
         <div className="row">
           <AccountPicker
@@ -208,17 +168,18 @@ export default function FillsPage() {
               {error}
             </span>
           )}
+          {result && (
+            <ExportMenu
+              rows={result.formatted_fills}
+              columns={FILLS_COLUMNS}
+              filename={`fills_${selectedAccount.name}_${result.start_date}_to_${result.end_date}`}
+              style={{ marginLeft: "auto" }}
+            />
+          )}
         </div>
       </div>
 
-      {result && (
-        <DataTable
-          rows={result.fills}
-          columns={fillsColumns}
-          keyField="execId"
-          exportFilename={`fills_${selectedAccount.name}_${result.start_date}_to_${result.end_date}`}
-        />
-      )}
+      {result && <DataTable rows={result.formatted_fills} columns={FILLS_COLUMNS} keyField="exec_id" />}
     </div>
   );
 }

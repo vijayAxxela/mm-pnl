@@ -14,3 +14,4 @@ wheels/
 
 # No local/sqlite DB — Postgres only
 *.db
+backend/scripts/test_fills/*

@@ -1,7 +1,7 @@
 # routes/fills.py
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Request
 from sqlalchemy.orm import Session
-from database.db import get_db, Account, Fill, Position, AccountProductSettings
+from database.db import get_db, Account, Fill, Position, AccountProductSettings, Market, TTUserCache
 from datetime import datetime, timedelta
 from typing import Optional
 import pytz
@@ -13,6 +13,107 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 IST = pytz.timezone('Asia/Kolkata')
+
+
+def _build_user_name_map(db: Session, tt_client, user_ids: set) -> dict:
+    """
+    Resolves a batch of curr_user_ids to real display names in ONE pass —
+    a single DB query for whichever of these ids are already cached, and
+    (only if any are still missing) exactly one TTClient.get_all_users()
+    call to refresh the whole cache, never one API/DB round-trip per fill.
+    """
+    user_ids = {int(uid) for uid in user_ids if uid}
+    if not user_ids:
+        return {}
+
+    def _name_of(row):
+        return row.alias or " ".join(filter(None, [row.first_name, row.last_name])) or None
+
+    cached = {row.id: row for row in db.query(TTUserCache).filter(TTUserCache.id.in_(user_ids)).all()}
+    if user_ids - cached.keys():
+        for user in tt_client.get_all_users():
+            existing = db.query(TTUserCache).filter(TTUserCache.id == user["id"]).first()
+            if existing:
+                existing.alias = user.get("alias")
+                existing.first_name = user.get("firstname")
+                existing.last_name = user.get("lastname")
+                existing.raw = user
+            else:
+                db.add(TTUserCache(
+                    id=user["id"],
+                    alias=user.get("alias"),
+                    first_name=user.get("firstname"),
+                    last_name=user.get("lastname"),
+                    raw=user,
+                ))
+        db.commit()
+        cached = {row.id: row for row in db.query(TTUserCache).filter(TTUserCache.id.in_(user_ids)).all()}
+
+    return {uid: (_name_of(row) if row else None) or str(uid) for uid, row in cached.items()}
+
+
+def format_fills_for_frontend(db: Session, tt_client, account: Account, raw_fills: list[dict]) -> list[dict]:
+    """
+    Formats raw TT fill payloads into exactly the columns the Fills page
+    shows — see FillsPage.jsx. Drops per-leg rows of a multi-leg (spread)
+    fill (multiLegReportingType == '2') same as everywhere else in this app
+    (PNL/alerts) — TT reports a spread both as this per-leg breakdown AND
+    the aggregated multi-leg fill, counting both would double things up.
+
+    "Account" uses our own Account.name (the name typed into the picker,
+    e.g. "KT513T"), NOT the raw account field TT puts on the fill itself
+    (which can be a different sub-account label, e.g. "R5041") — this is
+    our app's own account identity, not TT's.
+
+    algo_id is shown as-is, unresolved — a name lookup exists (TTAlgoCache/
+    TTClient.get_all_algos) but isn't used here; it added a slow API call
+    for comparatively little value (most algo_ids on real fills aren't in
+    TT's named-algo registry anyway, see routes/fills.py history).
+    """
+    from routes.pnl import _get_or_cache_instrument
+
+    market_names = {m.tt_market_id: m.name for m in db.query(Market).all()}
+    kept_fills = [f for f in raw_fills if f.get("multiLegReportingType") != "2"]
+    user_names = _build_user_name_map(db, tt_client, {f.get("currUserId") for f in kept_fills})
+
+    formatted = []
+    for fill in kept_fills:
+        instrument_id = fill.get("instrumentId")
+        try:
+            product = _get_or_cache_instrument(db, tt_client, instrument_id) if instrument_id else None
+        except Exception as e:
+            logger.warning(f"Failed to resolve instrument {instrument_id} for fills formatting: {e}")
+            product = None
+        contract = (product.alias or product.name) if product else (fill.get("securityDesc") or instrument_id)
+
+        transact_time_ns = fill.get("transactTime")
+        if transact_time_ns:
+            dt = datetime.fromtimestamp(int(transact_time_ns) / 1_000_000_000, tz=IST)
+            nanos_remainder = int(transact_time_ns) % 1000  # sub-microsecond digits datetime can't hold
+            time_str = dt.strftime("%d-%m-%y %H:%M:%S.%f") + f"{nanos_remainder:03d}"
+        else:
+            time_str = None
+
+        curr_user_id = fill.get("currUserId")
+
+        formatted.append({
+            "exec_id": fill.get("execId") or fill.get("uniqueExecId") or fill.get("recordId"),
+            "time": time_str,
+            "exchange": market_names.get(str(fill.get("marketId")), str(fill.get("marketId"))),
+            "contract": contract,
+            "side": "B" if fill.get("side") == 1 else "S" if fill.get("side") == 2 else None,
+            "price": fill.get("lastPx"),
+            "fill_qty": fill.get("lastQty"),
+            "account": account.name,
+            "manual_fill": fill.get("manualOrderIndicator"),
+            "algo_id": fill.get("algoId"),
+            "curr_user_id": curr_user_id,
+            "curr_user_name": user_names.get(int(curr_user_id)) if curr_user_id else None,
+            "order_id": fill.get("orderId"),
+            "parent_id": fill.get("parentOrderId"),
+        })
+
+    return formatted
 
 
 @router.get("/last-synced")
@@ -314,15 +415,20 @@ def sync_fills_for_account(db: Session, tt_client, account: Account, start_date:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error saving fills: {str(e)}")
 
+    formatted_fills = format_fills_for_frontend(db, tt_client, account, range_fills)
+
     return {
         "account_name": account.name,
         "start_date": start_date,
         "end_date": end_date,
         "total_fills": len(range_fills),
         "fills_saved": saved_count,
-        # Return every field TT gave us for each fill, not a trimmed subset,
-        # so the frontend can show/filter/sort on any of them.
-        "fills": range_fills
+        # Every field TT gave us, not a trimmed subset — kept for CSV export
+        # and any field not surfaced in the formatted view below.
+        "fills": range_fills,
+        # Exactly the columns the Fills page actually displays — see
+        # format_fills_for_frontend.
+        "formatted_fills": formatted_fills,
     }
 
 

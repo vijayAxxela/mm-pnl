@@ -392,6 +392,38 @@ class TTAccountCache(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
+class TTUserCache(Base):
+    """
+    Write-through cache of TT users (GET /ttuser/{env}/users) — resolves a
+    fill's curr_user_id to a real name for display (see routes/fills.py's
+    formatted fills). Refreshed as a whole list on any cache miss rather
+    than per-id (TT has no single-user-by-id-in-a-list endpoint that's
+    cheaper than just refetching everyone — the full list is small).
+    """
+    __tablename__ = "tt_user_cache"
+
+    id = Column(BigInteger, primary_key=True)
+    alias = Column(String, nullable=True)
+    first_name = Column(String, nullable=True)
+    last_name = Column(String, nullable=True)
+    raw = Column(JSON)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class TTAlgoCache(Base):
+    """
+    Write-through cache of TT algos (GET /ttpds/{env}/algos) — resolves a
+    fill's algo_id to a real name for display, same reasoning/refresh
+    pattern as TTUserCache above.
+    """
+    __tablename__ = "tt_algo_cache"
+
+    id = Column(String, primary_key=True)
+    name = Column(String, nullable=True)
+    raw = Column(JSON)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
 class UiState(Base):
     """
     Small generic key -> JSON value store for UI state that should survive a
