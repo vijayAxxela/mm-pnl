@@ -237,9 +237,26 @@ def check_and_fire_loss_alerts(db: Session, tt_client) -> Optional[dict]:
     Returns a dict describing what fired (for logging/broadcasting), or
     None if nothing happened (no Day Open snapshot yet today, or no new
     threshold crossed).
+
+    Mirrors the PNL page's own TOTAL row exactly (same rows, same "Change
+    from Open" basis — see PnlTree.jsx/routes/pnl.py's get_pnl_overview),
+    so the combined figure in an alert email always matches what's on
+    screen:
+      - Contracts with no activity today AND no open position (buy=sell=
+        net=0) are excluded from the sum, same as the frontend's own
+        filteredRows — a flat, untouched-today position's old PNL
+        shouldn't count toward an intraday loss alert.
+      - "Current" includes unrealized PNL too, computed the same way the
+        frontend does (client-typed current prices, read here from the
+        same ui_state row the frontend saves them to) — not realized-only.
+    A contract with no snapshot yet today defaults to 0.0, same as
+    get_pnl_overview — if that ever produces a misleading number, backfill
+    it manually with scripts/backfill_day_open_snapshot.py rather than
+    computing a live fallback here.
     """
     from routes.pnl import _compute_pnl_rows
     from routes.fills import _trading_day_window_ns
+    from database.db import UiState
 
     # The trading day's own calendar date, NOT plain today's-date-at-midnight
     # — the trading day rolls over at TRADING_DAY_START_TIME (e.g. 6:00 AM
@@ -266,10 +283,30 @@ def check_and_fire_loss_alerts(db: Session, tt_client) -> Optional[dict]:
     if not rows:
         return None
 
+    # Same zero-activity-today exclusion as PnlTree.jsx's filteredRows.
+    rows = [r for r in rows if not (r["buy_qty"] == 0 and r["sell_qty"] == 0 and r["open_qty"] == 0)]
+    if not rows:
+        return None
+
     snapshots = db.query(DailyPnlSnapshot).filter(DailyPnlSnapshot.snapshot_date == today).all()
     day_open_by_key = {(s.account_id, s.instrument_id): s.day_open_pnl for s in snapshots}
 
-    current_total = sum(r["realized_pnl"] for r in rows)
+    # Same manually-typed current prices the frontend reads/saves under this
+    # exact ui_state key (see PRICES_KEY in PnlTree.jsx) — global, not
+    # per-user, so this is literally the same numbers shown on screen.
+    prices_state = db.query(UiState).filter(UiState.key == "pnl-current-prices").first()
+    current_prices = prices_state.value or {} if prices_state else {}
+
+    def unrealized_of(row: dict) -> float:
+        price = current_prices.get(str(row["instrument_id"]))
+        if price is None or not row["open_qty"] or not row["tick_size"]:
+            return 0.0
+        direction = 1 if row["open_qty"] > 0 else -1
+        price_diff = direction * (price - row["avg_open_price"])
+        unrealized_native = (price_diff / row["tick_size"]) * row["tick_value"] * abs(row["open_qty"])
+        return unrealized_native * row.get("usd_rate", 1.0)
+
+    current_total = sum(r["realized_pnl"] + unrealized_of(r) for r in rows)
     day_open_total = sum(day_open_by_key.get((r["account_id"], r["instrument_id"]), 0.0) for r in rows)
 
     diff = current_total - day_open_total

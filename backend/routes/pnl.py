@@ -5,7 +5,6 @@ from sqlalchemy.exc import IntegrityError
 from pydantic import BaseModel
 from typing import List, Optional
 from database.db import get_db, Account, AccountProductSettings, Position, Product, ProductFamily, Fill, Market
-from datetime import datetime
 from collections import defaultdict, deque
 import logging
 
@@ -538,12 +537,18 @@ def snapshot_day_open_pnl(db: Session, tt_client) -> dict:
     movement since the day began. Upserts on (account_id, instrument_id,
     snapshot_date), so re-running for the same day is safe/idempotent.
     """
-    from routes.TT_routes import IST
+    from routes.fills import _trading_day_window_ns
     from database.db import DailyPnlSnapshot
 
     rows = _compute_pnl_rows(db, tt_client)
 
-    snapshot_date = datetime.now(IST).strftime('%Y-%m-%d')
+    # Trading-day-aware date, not plain calendar-midnight — matches every
+    # other "today" in this app (see alerts.py's check_and_fire_loss_alerts
+    # for the same fix and why). Normally called at TRADING_DAY_START_TIME +
+    # 15min so this rarely differs from the calendar date in practice, but
+    # stays correct if ever triggered manually before the boundary.
+    _, _, window_start, _ = _trading_day_window_ns()
+    snapshot_date = window_start.strftime('%Y-%m-%d')
     saved = 0
 
     for row in rows:
@@ -578,7 +583,10 @@ def get_pnl_overview(db: Session = Depends(get_db)):
     current trading day starts, if one has been taken yet — see
     snapshot_day_open_pnl), defaulting to 0.0 for a contract with no
     snapshot (e.g. before today's snapshot has run, or a just-opened new
-    contract).
+    contract). If that ever produces a misleading "Change from Open" for a
+    contract snapshot_day_open_pnl hasn't covered yet, backfill it manually
+    with scripts/backfill_day_open_snapshot.py rather than relying on a
+    live-computed fallback here.
     """
     from main import tt_client
     from routes.fills import _trading_day_window_ns
