@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from database.db import init_db, get_db, SessionLocal
 from routes import accounts, products, pnl, fills, ui_state, ws, alerts
-from routes.TT_routes import TTClient, IST, TRADING_DAY_START_HOUR, TRADING_DAY_START_MINUTE
+from routes.TT_routes import TTClient, IST
 from datetime import datetime, timedelta
 import asyncio
 import json
@@ -51,6 +51,38 @@ tt_client = TTClient(
     environment=os.getenv('TT_ENVIRONMENT', config.get('tt_api', {}).get('environment', 'ext_prod_live'))
 )
 
+def _maybe_run_day_open_snapshot(db):
+    """
+    Take today's Day Open PNL snapshot if it's due and hasn't been taken yet
+    — called from _run_scheduled_fill_sync, AFTER that cycle's fill sync has
+    committed, on the very same db session. That ordering is the point: it
+    used to be a separate timer loop (_daily_snapshot_loop) racing the fill
+    sync purely on wall-clock time, which could snapshot before that
+    morning's fills had actually landed (or, at the exact boundary, fire
+    twice back to back). Reading from a session that just committed the
+    fill sync guarantees the snapshot always sees that cycle's fills.
+    """
+    from routes.fills import _trading_day_window_ns
+    from database.db import DailyPnlSnapshot
+
+    _, _, window_start, now_ist = _trading_day_window_ns()
+    if now_ist < window_start + timedelta(minutes=DAY_OPEN_SNAPSHOT_MINUTES_AFTER_START):
+        return  # too early in the trading day — give fills a head start
+
+    snapshot_date = window_start.strftime('%Y-%m-%d')
+    already_taken = db.query(DailyPnlSnapshot).filter(
+        DailyPnlSnapshot.snapshot_date == snapshot_date
+    ).first() is not None
+    if already_taken:
+        return
+
+    result = pnl.snapshot_day_open_pnl(db, tt_client)
+    logger.info(
+        f"Day-open PNL snapshot for {result['snapshot_date']}: "
+        f"{result['contracts_snapshotted']} contract(s)"
+    )
+
+
 def _run_scheduled_fill_sync():
     """Runs in a worker thread (see _fill_sync_loop) — sync_all_accounts_fills
     is synchronous (requests + a sync SQLAlchemy session), so it must not run
@@ -69,6 +101,10 @@ def _run_scheduled_fill_sync():
         for r in result["results"]:
             if r["status"] == "error":
                 logger.warning(f"  {r['account_name']}: {r['detail']}")
+
+        # Fills for this cycle are committed above — safe to snapshot now if
+        # today's Day Open PNL is due (see _maybe_run_day_open_snapshot).
+        _maybe_run_day_open_snapshot(db)
 
         # Runs synchronously right here — after every fill sync, once a
         # Day Open snapshot exists for today (see the function's own
@@ -100,42 +136,6 @@ async def _fill_sync_loop():
         await asyncio.sleep(FILL_SYNC_INTERVAL_SECONDS)
 
 
-def _run_day_open_snapshot():
-    """Runs in a worker thread (see _daily_snapshot_loop) — snapshot_day_open_pnl
-    is synchronous, same reasoning as _run_scheduled_fill_sync above."""
-    db = SessionLocal()
-    try:
-        result = pnl.snapshot_day_open_pnl(db, tt_client)
-        logger.info(
-            f"Day-open PNL snapshot for {result['snapshot_date']}: "
-            f"{result['contracts_snapshotted']} contract(s)"
-        )
-    except Exception as e:
-        logger.error(f"Day-open PNL snapshot failed: {e}")
-    finally:
-        db.close()
-
-
-async def _daily_snapshot_loop():
-    """
-    Sleeps until the next (trading-day-start + DAY_OPEN_SNAPSHOT_MINUTES_AFTER_START)
-    mark, takes the snapshot, then repeats for the following day — rather
-    than polling, since this only needs to fire once per trading day.
-    """
-    while True:
-        now_ist = datetime.now(IST)
-        today_snapshot_time = now_ist.replace(
-            hour=TRADING_DAY_START_HOUR, minute=TRADING_DAY_START_MINUTE, second=0, microsecond=0
-        ) + timedelta(minutes=DAY_OPEN_SNAPSHOT_MINUTES_AFTER_START)
-
-        next_run = today_snapshot_time if now_ist < today_snapshot_time else today_snapshot_time + timedelta(days=1)
-        sleep_seconds = (next_run - now_ist).total_seconds()
-
-        logger.info(f"Next day-open PNL snapshot at {next_run.strftime('%Y-%m-%d %H:%M:%S IST')}")
-        await asyncio.sleep(sleep_seconds)
-        await asyncio.to_thread(_run_day_open_snapshot)
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting TT PNL Dashboard API...")
@@ -144,7 +144,6 @@ async def lifespan(app: FastAPI):
     logger.info("Database initialized")
 
     sync_task = None
-    snapshot_task = None
 
     try:
 
@@ -164,10 +163,11 @@ async def lifespan(app: FastAPI):
             logger.info("API ready to accept requests")
 
             sync_task = asyncio.create_task(_fill_sync_loop())
-            logger.info(f"Background fill sync scheduled every {FILL_SYNC_INTERVAL_SECONDS // 60} minutes")
-
-            snapshot_task = asyncio.create_task(_daily_snapshot_loop())
-            logger.info("Day-open PNL snapshot scheduler started")
+            logger.info(
+                f"Background fill sync scheduled every {FILL_SYNC_INTERVAL_SECONDS // 60} minutes "
+                f"(day-open PNL snapshot runs inline once {DAY_OPEN_SNAPSHOT_MINUTES_AFTER_START}min "
+                "into the trading day)"
+            )
         else:
             logger.error(f"✗ TT Login failed: {login_result.get('message', 'Unknown error')}")
             logger.warning("API will start but TT integration may not work properly")
@@ -186,13 +186,6 @@ async def lifespan(app: FastAPI):
         sync_task.cancel()
         try:
             await sync_task
-        except asyncio.CancelledError:
-            pass
-
-    if snapshot_task:
-        snapshot_task.cancel()
-        try:
-            await snapshot_task
         except asyncio.CancelledError:
             pass
 
