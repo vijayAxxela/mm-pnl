@@ -57,6 +57,23 @@ export const api = {
   // PNL
   getPnlOverview: () => get("/api/pnl/overview"),
 
+  // Analyze
+  getGduFifoAnalysis: () => get("/api/analyze/gdu-fifo"),
+
+  // Data upload (Time & Sales / OHLC) — multipart, not JSON, so it bypasses
+  // the request() helper's Content-Type: application/json header (the
+  // browser needs to set its own multipart boundary for FormData).
+  uploadData: async (formData) => {
+    const res = await fetch(`${BASE_URL}/api/data/upload`, { method: "POST", body: formData });
+    const text = await res.text();
+    const body = text ? JSON.parse(text) : null;
+    if (!res.ok) {
+      const message = body?.detail ? JSON.stringify(body.detail) : res.statusText;
+      throw new Error(message);
+    }
+    return body;
+  },
+
   // UI state (shared globally — no per-user accounts in this app)
   getUiState: (key) => get(`/api/ui-state/${encodeURIComponent(key)}`),
   setUiState: (key, value) => put(`/api/ui-state/${encodeURIComponent(key)}`, { value }),

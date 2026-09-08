@@ -427,6 +427,54 @@ class TTAlgoCache(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
+class TimeAndSales(Base):
+    """
+    Raw time & sales prints uploaded from an external file (see
+    routes/data_upload.py) — contract-agnostic, so any contract's T&S can be
+    added over time, not just GDU. One row per print; identity for
+    dedup-on-reupload purposes is the (contract, timestamp, qty, price)
+    tuple, since the source files carry no other row id.
+    """
+    __tablename__ = "time_and_sales"
+
+    id = Column(Integer, primary_key=True, index=True)
+    contract = Column(String, nullable=False, index=True)
+    timestamp = Column(DateTime, nullable=False, index=True)
+    qty = Column(Float, nullable=False)
+    price = Column(Float, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    __table_args__ = (
+        UniqueConstraint('contract', 'timestamp', 'qty', 'price', name='unique_time_and_sales_row'),
+    )
+
+
+class OhlcBar(Base):
+    """
+    Raw OHLC bars uploaded from an external file (see
+    routes/data_upload.py) — contract-agnostic (e.g. "GC Dec26", "GC
+    Aug26"), one row per bar. Identity is (contract, timestamp): a bar
+    series is naturally indexed by its bucket start time, so re-uploading
+    the same bar (even with revised O/H/L/C/V) is treated as already
+    present rather than inserted again.
+    """
+    __tablename__ = "ohlc_bars"
+
+    id = Column(Integer, primary_key=True, index=True)
+    contract = Column(String, nullable=False, index=True)
+    timestamp = Column(DateTime, nullable=False, index=True)
+    open = Column(Float, nullable=True)
+    high = Column(Float, nullable=False)
+    low = Column(Float, nullable=False)
+    close = Column(Float, nullable=True)
+    volume = Column(Float, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    __table_args__ = (
+        UniqueConstraint('contract', 'timestamp', name='unique_ohlc_bar'),
+    )
+
+
 class UiState(Base):
     """
     Small generic key -> JSON value store for UI state that should survive a

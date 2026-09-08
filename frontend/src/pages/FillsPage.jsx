@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../api.js";
-import DataTable, { ExportMenu } from "../components/DataTable.jsx";
+import DataTable, { ExportMenu, ColumnStatsBadge } from "../components/DataTable.jsx";
 import DatePickerField from "../components/DatePickerField.jsx";
 import { useClickOutside } from "../utils/useClickOutside.js";
 import { Search, Loader2, ArrowRight } from "../components/icons.jsx";
@@ -111,6 +111,7 @@ export default function FillsPage() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [fillsStats, setFillsStats] = useState(null);
 
   useEffect(() => {
     api
@@ -168,18 +169,21 @@ export default function FillsPage() {
               {error}
             </span>
           )}
+          {result && <ColumnStatsBadge stats={fillsStats} style={{ marginLeft: "auto" }} />}
           {result && (
             <ExportMenu
               rows={result.formatted_fills}
               columns={FILLS_COLUMNS}
               filename={`fills_${selectedAccount.name}_${result.start_date}_to_${result.end_date}`}
-              style={{ marginLeft: "auto" }}
+              style={fillsStats ? undefined : { marginLeft: "auto" }}
             />
           )}
         </div>
       </div>
 
-      {result && <DataTable rows={result.formatted_fills} columns={FILLS_COLUMNS} keyField="exec_id" />}
+      {result && (
+        <DataTable rows={result.formatted_fills} columns={FILLS_COLUMNS} keyField="exec_id" onColumnStatsChange={setFillsStats} />
+      )}
     </div>
   );
 }

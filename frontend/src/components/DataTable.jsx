@@ -26,11 +26,21 @@ function colAlign(col) {
 }
 
 // Numeric strings (e.g. nanosecond timestamps) should sort numerically, not lexically.
-function sortValue(value) {
+function defaultSortValue(value) {
   if (typeof value === "string" && value.trim() !== "" && !Number.isNaN(Number(value))) {
     return Number(value);
   }
   return value;
+}
+
+// A column can define its own sortValue(row) when the displayed text isn't
+// itself sortable — e.g. a "DD-MM-YY HH:MM:SS" string sorts alphabetically
+// wrong (day-of-month before year/month), so a column showing that needs to
+// hand back the underlying epoch instead (see AnalyzePage.jsx's entry/exit
+// time columns).
+function getSortValue(col, row) {
+  if (typeof col !== "string" && col.sortValue) return col.sortValue(row);
+  return defaultSortValue(row[colKey(col)]);
 }
 
 // Display text for a cell: what the user sees, filters against, and exports —
@@ -41,6 +51,35 @@ function displayValue(col, row) {
     if (typeof rendered === "string" || typeof rendered === "number") return String(rendered);
   }
   return formatCell(row[colKey(col)]);
+}
+
+// Sum/Avg/Count for a clicked column, over whatever's currently visible
+// (post-filter) — raw row[key] values, not the rendered display text, so a
+// column with a custom render (e.g. PnL's colored badge) still sums the
+// actual number. Non-numeric columns just get a count of non-blank cells.
+function computeColumnStats(col, rows) {
+  const key = colKey(col);
+  let count = 0;
+  let sum = 0;
+  let numericCount = 0;
+  for (const row of rows) {
+    const raw = row[key];
+    if (raw === null || raw === undefined || raw === "") continue;
+    count += 1;
+    const n = typeof raw === "number" ? raw : Number(raw);
+    if (Number.isFinite(n)) {
+      sum += n;
+      numericCount += 1;
+    }
+  }
+  const isNumeric = numericCount > 0 && numericCount === count;
+  return {
+    key,
+    label: colLabel(col),
+    count,
+    sum: isNumeric ? sum : null,
+    avg: isNumeric && count > 0 ? sum / count : null,
+  };
 }
 
 // A single Excel-style icon button that opens a small "CSV / Excel" choice —
@@ -91,17 +130,35 @@ export function ExportMenu({ rows, columns, filename = "export", style }) {
   );
 }
 
+// Renders whatever DataTable's onColumnStatsChange last reported — meant to
+// sit in a page's own toolbar row, next to its ExportMenu (see
+// FillsPage.jsx/AnalyzePage.jsx), same reasoning as ExportMenu itself living
+// outside DataTable: the page controls where it appears.
+export function ColumnStatsBadge({ stats, style }) {
+  if (!stats) return null;
+  const parts = [`Count ${stats.count.toLocaleString()}`];
+  if (stats.sum !== null) parts.push(`Sum ${stats.sum.toLocaleString(undefined, { maximumFractionDigits: 2 })}`);
+  if (stats.avg !== null) parts.push(`Avg ${stats.avg.toLocaleString(undefined, { maximumFractionDigits: 2 })}`);
+  return (
+    <span className="column-stats-badge" style={style}>
+      <strong>{stats.label}:</strong> {parts.join(" · ")}
+    </span>
+  );
+}
+
 // Rendering every row into the DOM at once (a fetch can return many
 // thousands of raw fills) is what was locking up / crashing the tab.
 // Render a bounded window and let the user page in more on demand.
 const PAGE_SIZE = 200;
 
-export default function DataTable({ rows, columns, keyField }) {
+export default function DataTable({ rows, columns, keyField, onColumnStatsChange, compact = false, showFilters = true }) {
   const cols = columns || (rows && rows.length > 0 ? Object.keys(rows[0]) : []);
 
   const [columnFilters, setColumnFilters] = useState({}); // key -> Set<string> | null(=no filter, omitted)
   const [sort, setSort] = useState({ key: null, dir: "asc" });
   const [renderLimit, setRenderLimit] = useState(PAGE_SIZE);
+  const [statsKey, setStatsKey] = useState(null); // column key currently showing Sum/Avg/Count, or null
+  const [selectedRow, setSelectedRow] = useState(null); // row object reference currently highlighted, or null
 
   // Unique display values per column, computed once from the full dataset
   // (not the currently-filtered rows) — matches how spreadsheet filters work.
@@ -117,8 +174,6 @@ export default function DataTable({ rows, columns, keyField }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows]);
 
-  const activeFilterKeys = Object.keys(columnFilters).filter((k) => columnFilters[k] !== null && columnFilters[k] !== undefined);
-
   const visibleRows = useMemo(() => {
     if (!rows) return [];
     let result = rows;
@@ -132,9 +187,10 @@ export default function DataTable({ rows, columns, keyField }) {
     }
 
     if (sort.key) {
+      const sortCol = cols.find((c) => colKey(c) === sort.key);
       result = [...result].sort((a, b) => {
-        const av = sortValue(a[sort.key]);
-        const bv = sortValue(b[sort.key]);
+        const av = getSortValue(sortCol, a);
+        const bv = getSortValue(sortCol, b);
         if (av === null || av === undefined) return 1;
         if (bv === null || bv === undefined) return -1;
         const cmp = typeof av === "number" && typeof bv === "number" ? av - bv : String(av).localeCompare(String(bv));
@@ -151,6 +207,37 @@ export default function DataTable({ rows, columns, keyField }) {
   useEffect(() => {
     setRenderLimit(PAGE_SIZE);
   }, [rows, columnFilters, sort]);
+
+  // A new dataset (e.g. a fresh fetch) can't contain the same row object
+  // reference any more — drop a stale highlight rather than pointing at
+  // nothing. Filtering/sorting the SAME dataset keeps the highlight, since
+  // the row itself still exists, just possibly reordered/hidden.
+  useEffect(() => {
+    setSelectedRow(null);
+  }, [rows]);
+
+  // Recomputed over whatever's currently visible (post-filter), so toggling
+  // a filter updates an already-open Sum/Avg/Count instead of it going stale.
+  const columnStats = useMemo(() => {
+    if (!statsKey) return null;
+    const col = cols.find((c) => colKey(c) === statsKey);
+    return col ? computeColumnStats(col, visibleRows) : null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statsKey, visibleRows]);
+
+  useEffect(() => {
+    onColumnStatsChange?.(columnStats);
+  }, [columnStats, onColumnStatsChange]);
+
+  // Reported to the parent so its own toolbar (e.g. next to the Export
+  // button) can render it — a closed table (no rows) never leaves a stale
+  // reading behind in that toolbar.
+  useEffect(() => {
+    return () => onColumnStatsChange?.(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const toggleStatsColumn = (key) => setStatsKey((prev) => (prev === key ? null : key));
 
   if (!rows || rows.length === 0) {
     return <p className="status">No data.</p>;
@@ -175,18 +262,9 @@ export default function DataTable({ rows, columns, keyField }) {
     setSort({ key: null, dir: "asc" });
   };
 
-  const hasActiveState = activeFilterKeys.length > 0 || sort.key !== null;
-
   return (
-    <div className="datatable">
+    <div className={`datatable${compact ? " datatable--compact" : ""}`}>
       <div className="datatable-table-area">
-        {hasActiveState && (
-          <div className="datatable-floating-controls">
-            <button type="button" className="link-btn datatable-clear-all" onClick={clearAll}>
-              Clear all
-            </button>
-          </div>
-        )}
 
         <div className={`table-wrap table-wrap--fit${hasMore ? " table-wrap--attached" : ""}`}>
         <table>
@@ -197,19 +275,31 @@ export default function DataTable({ rows, columns, keyField }) {
                 const align = colAlign(col);
                 const active = sort.key === key;
                 return (
-                  <th key={key} aria-sort={active ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}>
+                  <th
+                    key={key}
+                    className={statsKey === key ? "col-selected" : undefined}
+                    aria-sort={active ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}
+                  >
                     <div className="th-inner" style={{ justifyContent: align === "right" ? "flex-end" : "space-between" }}>
-                      <span className="th-label" title={colLabel(col)}>
+                      <button
+                        type="button"
+                        className={`th-label th-label-btn${statsKey === key ? " active" : ""}`}
+                        title={`${colLabel(col)} — click for Sum/Avg/Count`}
+                        onClick={() => toggleStatsColumn(key)}
+                      >
                         {colLabel(col)}
                         {active && <span className="th-sort-indicator">{sort.dir === "asc" ? "▲" : "▼"}</span>}
-                      </span>
-                      <ColumnFilterMenu
-                        values={uniqueValuesByKey[key] || []}
-                        selected={columnFilters[key] ?? null}
-                        onChange={(sel) => setColumnFilter(key, sel)}
-                        sortDir={active ? sort.dir : null}
-                        onSort={(dir) => setColumnSort(key, dir)}
-                      />
+                      </button>
+                      {showFilters && (
+                        <ColumnFilterMenu
+                          values={uniqueValuesByKey[key] || []}
+                          selected={columnFilters[key] ?? null}
+                          onChange={(sel) => setColumnFilter(key, sel)}
+                          sortDir={active ? sort.dir : null}
+                          onSort={(dir) => setColumnSort(key, dir)}
+                          dateMode={typeof col !== "string" && !!col.dateFilter}
+                        />
+                      )}
                     </div>
                   </th>
                 );
@@ -218,11 +308,19 @@ export default function DataTable({ rows, columns, keyField }) {
           </thead>
           <tbody>
             {pagedRows.map((row, i) => (
-              <tr key={keyField ? row[keyField] : i}>
+              <tr
+                key={keyField ? row[keyField] : i}
+                className={selectedRow === row ? "row-selected" : undefined}
+                onClick={() => setSelectedRow((prev) => (prev === row ? null : row))}
+              >
                 {cols.map((col) => {
                   const key = colKey(col);
                   return (
-                    <td key={key} style={{ textAlign: colAlign(col) }}>
+                    <td
+                      key={key}
+                      className={statsKey === key ? "col-selected" : undefined}
+                      style={{ textAlign: colAlign(col) }}
+                    >
                       {col.render ? col.render(row) : formatCell(row[key])}
                     </td>
                   );

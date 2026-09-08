@@ -15,3 +15,9 @@ wheels/
 # No local/sqlite DB — Postgres only
 *.db
 backend/scripts/test_fills/*
+backend/analyze utils/GC OHLC 10sec.xlsx
+backend/analyze utils/GDU_Analysis_FIFO_GC_Ranges_DivideBy0.1 (Histograms Added).xlsx
+backend/analyze utils/GDU_fills_converted.xlsx
+backend/analyze utils/GDUTS.xlsx
+backend/analyze utils/missing_fills_vs_workbook.csv
+backend/analyze utils/~$GDU_Analysis_FIFO_GC_Ranges_DivideBy0.1 (Histograms Added).xlsx

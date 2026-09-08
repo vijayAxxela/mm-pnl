@@ -2,11 +2,19 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useClickOutside } from "../utils/useClickOutside.js";
 import { ListFilter, ArrowUpAZ, ArrowDownAZ, Search } from "./icons.jsx";
+import DateFilterTree from "./DateFilterTree.jsx";
 
 const MENU_WIDTH = 220;
+const DATE_MENU_WIDTH = 250;
 const MENU_MAX_HEIGHT = 360;
 
-export default function ColumnFilterMenu({ values, selected, onChange, sortDir, onSort }) {
+// dateMode: true renders values (expected to be the "DD-MM-YY
+// HH:MM:SS.mmm" strings DataTable's date columns produce — see
+// AnalyzePage.jsx's entry_time/exit_time) as an Excel-style Year > Month >
+// Day > Time checkbox tree instead of a flat list, while still typing into
+// the exact same draft Set<string> everything else here (Select all,
+// Apply/Clear, the underlying columnFilters state) already works with.
+export default function ColumnFilterMenu({ values, selected, onChange, sortDir, onSort, dateMode = false }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [draft, setDraft] = useState(selected ?? new Set(values));
@@ -19,6 +27,10 @@ export default function ColumnFilterMenu({ values, selected, onChange, sortDir, 
   const containerRef = useClickOutside(() => setOpen(false), menuRef);
 
   const active = selected !== null;
+  const menuWidth = dateMode ? DATE_MENU_WIDTH : MENU_WIDTH;
+  // The tree is only shown while not searching — typing a search still
+  // falls back to the flat matching list (same as Excel itself does).
+  const showTree = dateMode && search.trim() === "";
 
   useEffect(() => {
     if (!open) return;
@@ -29,8 +41,8 @@ export default function ColumnFilterMenu({ values, selected, onChange, sortDir, 
     // viewport so it never gets clipped by an ancestor's overflow:auto (the
     // scrolling table container) or run off the edge of the screen.
     const rect = containerRef.current.getBoundingClientRect();
-    let left = rect.right - MENU_WIDTH;
-    left = Math.max(8, Math.min(left, window.innerWidth - MENU_WIDTH - 8));
+    let left = rect.right - menuWidth;
+    left = Math.max(8, Math.min(left, window.innerWidth - menuWidth - 8));
 
     let top = rect.bottom + 4;
     if (top + MENU_MAX_HEIGHT > window.innerHeight) {
@@ -58,6 +70,19 @@ export default function ColumnFilterMenu({ values, selected, onChange, sortDir, 
       const next = new Set(prev);
       if (allVisibleChecked) visibleValues.forEach((v) => next.delete(v));
       else visibleValues.forEach((v) => next.add(v));
+      return next;
+    });
+  };
+
+  // Bulk toggle for the date tree — a Year/Month/Day node checks/unchecks
+  // every exact timestamp underneath it in one go.
+  const toggleMany = (vals, checked) => {
+    setDraft((prev) => {
+      const next = new Set(prev);
+      for (const v of vals) {
+        if (checked) next.add(v);
+        else next.delete(v);
+      }
       return next;
     });
   };
@@ -92,7 +117,7 @@ export default function ColumnFilterMenu({ values, selected, onChange, sortDir, 
             className="col-filter-menu"
             role="menu"
             ref={menuRef}
-            style={{ position: "fixed", top: menuPos.top, left: menuPos.left, right: "auto", width: MENU_WIDTH }}
+            style={{ position: "fixed", top: menuPos.top, left: menuPos.left, right: "auto", width: menuWidth }}
           >
             <button
               type="button"
@@ -121,7 +146,12 @@ export default function ColumnFilterMenu({ values, selected, onChange, sortDir, 
 
             <div className="col-filter-search">
               <Search size={12} className="col-filter-search-icon" aria-hidden="true" />
-              <input autoFocus placeholder="Search values..." value={search} onChange={(e) => setSearch(e.target.value)} />
+              <input
+                autoFocus
+                placeholder={dateMode ? "Search dates/times..." : "Search values..."}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
 
             <label className="col-filter-value col-filter-selectall">
@@ -130,13 +160,19 @@ export default function ColumnFilterMenu({ values, selected, onChange, sortDir, 
             </label>
 
             <div className="col-filter-values">
-              {visibleValues.map((v) => (
-                <label key={v} className="col-filter-value">
-                  <input type="checkbox" checked={draft.has(v)} onChange={() => toggleValue(v)} />
-                  <span title={v}>{v === "" ? "(blank)" : v}</span>
-                </label>
-              ))}
-              {visibleValues.length === 0 && <div className="col-filter-empty">No matches</div>}
+              {showTree ? (
+                <DateFilterTree values={values} draft={draft} onToggleMany={toggleMany} />
+              ) : (
+                <>
+                  {visibleValues.map((v) => (
+                    <label key={v} className="col-filter-value">
+                      <input type="checkbox" checked={draft.has(v)} onChange={() => toggleValue(v)} />
+                      <span title={v}>{v === "" ? "(blank)" : v}</span>
+                    </label>
+                  ))}
+                  {visibleValues.length === 0 && <div className="col-filter-empty">No matches</div>}
+                </>
+              )}
             </div>
 
             <div className="col-filter-footer">

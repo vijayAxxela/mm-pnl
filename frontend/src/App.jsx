@@ -3,17 +3,22 @@ import { NavLink, Route, Routes, Navigate } from "react-router-dom";
 import AccountsPage from "./pages/AccountsPage.jsx";
 import PnlPage from "./pages/PnlPage.jsx";
 import FillsPage from "./pages/FillsPage.jsx";
+import AnalyzePage from "./pages/AnalyzePage.jsx";
 import LastSyncedBadge from "./components/LastSyncedBadge.jsx";
+import { DataUploadModal, DataUploadBanner } from "./components/DataUploadControl.jsx";
 import { useLossAlertSound } from "./utils/useLossAlertSound.js";
+import { useDataUpload } from "./utils/useDataUpload.js";
 
 const links = [
   { to: "/pnl", label: "PNL" },
   { to: "/fills", label: "Fills" },
   { to: "/accounts", label: "Accounts" },
+  { to: "/analyze", label: "Analyze" },
 ];
 
 export default function App() {
   const [lossToast, setLossToast] = useState(null);
+  const upload = useDataUpload();
 
   // Global — fires regardless of which page is open, since a combined-loss
   // alert matters no matter what the user's currently looking at.
@@ -44,6 +49,9 @@ export default function App() {
         <LastSyncedBadge />
       </header>
 
+      <DataUploadModal upload={upload} />
+      <DataUploadBanner upload={upload} />
+
       {lossToast && (
         <div className="loss-toast" role="alert">
           <span>
@@ -62,6 +70,7 @@ export default function App() {
           <Route path="/accounts" element={<AccountsPage />} />
           <Route path="/fills" element={<FillsPage />} />
           <Route path="/pnl" element={<PnlPage />} />
+          <Route path="/analyze" element={<AnalyzePage upload={upload} />} />
         </Routes>
       </main>
     </div>

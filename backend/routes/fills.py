@@ -136,7 +136,8 @@ def sync_fills(
         days_back: Number of days to look back from now (default: 1)
     """
     from main import tt_client
-    
+    from routes.pnl import _get_or_cache_instrument
+
     # Get all accounts that have products configured
     accounts_with_products = db.query(Account).join(AccountProductSettings).distinct().all()
     
@@ -184,21 +185,26 @@ def sync_fills(
             ).all()
             products = [p.product_symbol.upper() for p in product_settings]
             
-            # Get instrument details for filtering
+            # Get instrument details for filtering — cache-first (see
+            # _get_or_cache_instrument), so an instrument already in the
+            # Product table is never re-fetched from TT just to check its
+            # symbol here.
             unique_instrument_ids = set(fill.get('instrumentId') for fill in time_filtered_fills)
             instrument_map = {}
-            
+
             for instrument_id in unique_instrument_ids:
                 try:
-                    instrument = tt_client.get_instrument_by_id(instrument_id)
-                    instrument_map[instrument_id] = instrument
+                    # .raw is the same raw TT payload dict get_instrument_by_id
+                    # used to return directly — _update_position_fifo below
+                    # still expects dict-style access.
+                    instrument_map[instrument_id] = _get_or_cache_instrument(db, tt_client, instrument_id).raw
                 except Exception as e:
                     logger.warning(f"Failed to get instrument {instrument_id}: {str(e)}")
-            
+
             # Filter by configured products
             for fill in time_filtered_fills:
                 instrument_id = fill.get('instrumentId')
-                
+
                 # Check if instrument matches configured products
                 if instrument_id in instrument_map:
                     instrument = instrument_map[instrument_id]

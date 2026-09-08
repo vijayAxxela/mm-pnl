@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from database.db import init_db, get_db, SessionLocal
-from routes import accounts, products, pnl, fills, ui_state, ws, alerts
+from routes import accounts, products, pnl, fills, ui_state, ws, alerts, analyze, data_upload
 from routes.TT_routes import TTClient, IST
 from datetime import datetime, timedelta
 import asyncio
@@ -207,6 +207,8 @@ app.include_router(fills.router, prefix="/api/fills", tags=["Fills"])
 app.include_router(ui_state.router, prefix="/api/ui-state", tags=["UI State"])
 app.include_router(ws.router, prefix="/ws", tags=["WebSocket"])
 app.include_router(alerts.router, prefix="/api/alerts", tags=["Alerts"])
+app.include_router(analyze.router, prefix="/api/analyze", tags=["Analyze"])
+app.include_router(data_upload.router, prefix="/api/data", tags=["Data Upload"])
 
 @app.get("/")
 async def root():

@@ -208,6 +208,161 @@ a:focus-visible {
   padding: 0 var(--space-2);
 }
 
+/* ---------- data upload (Analyze page's "Add New Data") ---------- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 6, 12, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-card {
+  width: 420px;
+  max-width: calc(100vw - var(--space-6) * 2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 13px;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--color-muted-foreground);
+  padding: var(--space-1);
+  line-height: 0;
+}
+
+.modal-close:hover {
+  color: var(--color-foreground);
+}
+
+.modal-steps {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-5) 0;
+}
+
+.modal-step {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-muted-foreground);
+  padding-bottom: var(--space-2);
+  border-bottom: 2px solid transparent;
+}
+
+.modal-step.active {
+  color: var(--color-foreground);
+  border-bottom-color: var(--color-accent);
+}
+
+.modal-body {
+  padding: var(--space-4) var(--space-5);
+}
+
+.modal-hint {
+  margin: 0 0 var(--space-3);
+  color: var(--color-muted-foreground);
+  font-size: 12px;
+}
+
+.modal-body input[type="file"] {
+  width: 100%;
+  height: auto;
+  padding: var(--space-2) var(--space-3);
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5) var(--space-4);
+}
+
+.data-upload-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-5);
+  background: var(--color-elevated);
+  border-bottom: 1px solid var(--color-border-strong);
+  font-size: 12px;
+}
+
+.data-upload-banner.done {
+  background: color-mix(in srgb, var(--color-accent) 16%, var(--color-elevated));
+  border-bottom-color: var(--color-accent);
+}
+
+.data-upload-banner.error {
+  background: color-mix(in srgb, var(--color-destructive) 20%, var(--color-elevated));
+  border-bottom-color: var(--color-destructive);
+}
+
+.data-upload-banner-message {
+  flex-shrink: 0;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40%;
+}
+
+.data-upload-progress-track {
+  flex: 1 1 auto;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-surface-2);
+  overflow: hidden;
+}
+
+.data-upload-progress-fill {
+  height: 100%;
+  background: var(--color-accent);
+  transition: width 200ms ease-out;
+}
+
+.data-upload-banner.error .data-upload-progress-fill {
+  background: var(--color-destructive);
+}
+
+.data-upload-banner-hint {
+  flex-shrink: 0;
+  color: var(--color-muted-foreground);
+  white-space: nowrap;
+}
+
+.data-upload-banner-dismiss {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 var(--space-1);
+}
+
 .topbar-nav {
   display: flex;
   align-items: center;
@@ -605,6 +760,51 @@ th {
   white-space: nowrap;
 }
 
+/* .th-label is a <button> (click toggles that column's Sum/Avg/Count) —
+   reset to look like the plain text it used to be, same approach as .th-sort. */
+.th-label-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  font: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+  text-align: inherit;
+}
+
+.th-label-btn:hover,
+.th-label-btn.active {
+  color: var(--color-accent);
+}
+
+/* Compact mode (see DataTable's `compact` prop, used by the Analyze page's
+   Summary table) — no filter icon (usually paired with showFilters=false,
+   so there's nothing left to make room for), tighter padding, and no
+   forced min-width per column, so a handful of short metric columns fit
+   on one line without a horizontal scrollbar. */
+.datatable--compact .th-inner {
+  padding: 4px var(--space-2);
+  min-width: 0;
+}
+
+.datatable--compact th,
+.datatable--compact td {
+  padding: 4px var(--space-2);
+}
+
+.column-stats-badge {
+  font-size: 12px;
+  color: var(--color-muted-foreground);
+  white-space: nowrap;
+}
+
+.column-stats-badge strong {
+  color: var(--color-foreground);
+}
+
 .th-sort {
   display: inline-flex;
   align-items: center;
@@ -640,6 +840,28 @@ tbody tr:nth-child(even) {
 
 tbody tr:hover {
   background: var(--color-elevated);
+}
+
+tbody tr {
+  cursor: pointer;
+}
+
+/* Click a row to highlight it, click a column header to highlight the whole
+   column (see DataTable.jsx) — a spreadsheet-style "where am I" cross-hair,
+   independent of hover and of even/odd row striping. */
+tbody tr.row-selected {
+  background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+}
+
+th.col-selected,
+td.col-selected {
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+}
+
+/* The row highlight's own background should still show through a
+   highlighted column cell where the two overlap, just stronger. */
+tbody tr.row-selected td.col-selected {
+  background: color-mix(in srgb, var(--color-accent) 26%, transparent);
 }
 
 .table-wrap {
@@ -686,6 +908,7 @@ tbody tr:hover {
   flex-direction: column;
   flex: 1 1 auto;
   min-height: 0;
+  min-width: 0;
 }
 
 /* No toolbar row anymore — "Clear all" (only shown once a filter/sort is
@@ -702,20 +925,7 @@ tbody tr:hover {
   align-items: flex-start;
   flex: 1 1 auto;
   min-height: 0;
-}
-
-.datatable-floating-controls {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.datatable-clear-all {
-  font-size: 11px;
+  min-width: 0;
 }
 
 .search-field {
@@ -927,7 +1137,11 @@ tbody tr:hover {
   border: 1px solid var(--color-border-strong);
   border-radius: 6px;
   padding: var(--space-2);
-  z-index: 20;
+  /* Portaled to document.body (see ColumnFilterMenu.jsx), so it sits outside
+     any ancestor's stacking context — has to outrank .analyze-trades-panel
+     --expanded's z-index:40 (the Trade Sheet's full-viewport overlay) or the
+     menu renders correctly but invisibly/unclickably behind the panel. */
+  z-index: 60;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
   text-transform: none;
   font-weight: 400;
@@ -1047,6 +1261,24 @@ tbody tr:hover {
 
 .export-menu {
   width: 140px;
+}
+
+/* ---------- Date filter tree (Year > Month > Day > Time) ---------- */
+
+.date-tree-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  width: 12px;
+  flex-shrink: 0;
+  color: var(--color-muted-foreground);
+  font-size: 10px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.date-tree-toggle:hover {
+  color: var(--color-foreground);
 }
 
 /* ---------- account search list ---------- */
@@ -1362,6 +1594,248 @@ tr.pnl-row.selected:hover {
 
 .pnl-badge.bare.neg {
   color: color-mix(in srgb, var(--color-destructive) 82%, white);
+}
+
+/* ---------- Analyze page ---------- */
+
+.analyze-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* Sections stack full-width, page scrolls normally — each section's own
+   table/chart sizes to its content instead of being squeezed into a fixed
+   panel height. */
+.analyze-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.analyze-section {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.analyze-section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+}
+
+.analyze-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-foreground);
+  white-space: nowrap;
+  margin: 0;
+}
+
+.analyze-section-meta {
+  font-size: 11px;
+  color: var(--color-muted-foreground);
+  font-family: "Fira Code", ui-monospace, monospace;
+  white-space: nowrap;
+}
+
+.analyze-section-header > :last-child {
+  margin-left: auto;
+}
+
+.analyze-section-collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  border-radius: var(--radius);
+}
+
+.analyze-section-collapse-btn:hover {
+  color: var(--color-foreground);
+  background: var(--color-surface-3, var(--color-border));
+}
+
+.analyze-section--collapsed .analyze-section-header {
+  border-bottom: none;
+}
+
+.analyze-section-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.analyze-histogram-body {
+  padding: var(--space-2);
+}
+
+/* Page-header row actions ("View Trades" + "Add New Data"), grouped together
+   on the right since neither needs a section of its own anymore. */
+.analyze-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-left: auto;
+}
+
+/* 2x2 layout for the four remaining tables/chart: GDU Analysis top-left,
+   PnL Histogram top-right, Half Hour bottom-left, Half Hourly Summary
+   bottom-right. Each row's height is driven by GDU Analysis / Half Hourly
+   Summary (see AnalyzePage.jsx's ResizeObserver pair, which measures those
+   two and copies the result onto Histogram / Half Hour as an inline
+   style height). Half Hour can hold far more rows than Half Hourly
+   Summary, so instead of growing the row to fit, it scrolls internally —
+   the existing flex/min-height:0 chain down to .table-wrap's own
+   overflow:auto handles that once its section has a fixed height. */
+.analyze-quad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "gdu hist"
+    "hh hhs";
+  gap: var(--space-4);
+}
+
+.analyze-quad-gdu {
+  grid-area: gdu;
+}
+
+.analyze-quad-hist {
+  grid-area: hist;
+}
+
+.analyze-quad-halfhour {
+  grid-area: hh;
+}
+
+.analyze-quad-hhsummary {
+  grid-area: hhs;
+}
+
+/* GDU Analysis and Half Hourly Summary are the reference cells the row
+   height is measured from — align-self:start pins each to its OWN natural
+   content height instead of the grid's default stretch-to-row-height,
+   which would otherwise let its row-mate's much taller natural size (Half
+   Hour's many rows, or Plotly's own default size before it's told a
+   height) balloon it too, and get measured and locked in as if it were
+   correct. Their row-mates (Histogram, Half Hour) keep the default stretch
+   and are instead pinned to an exact pixel height via inline style. */
+.analyze-quad-gdu,
+.analyze-quad-hhsummary {
+  align-self: start;
+}
+
+/* Every numeric cell across Summary/GDU Analysis/Half Hour/Half Hourly
+   Summary/Trade Sheet — right-aligned (via the column's own
+   align:"right") monospace figures, colored by sign only when the value
+   is itself a PnL figure (see pnlCell vs numCell in AnalyzePage.jsx). */
+.num-cell {
+  font-family: "Fira Code", ui-monospace, monospace;
+}
+
+.num-cell.pos {
+  color: color-mix(in srgb, var(--color-accent) 80%, white);
+  font-weight: 700;
+}
+
+.num-cell.neg {
+  color: color-mix(in srgb, var(--color-destructive) 82%, white);
+  font-weight: 700;
+}
+
+.num-cell.zero {
+  color: var(--color-muted-foreground);
+}
+
+/* Trade Sheet's All/Profitable/Loss Making/Scratched filter tabs (see
+   AnalyzePage.jsx's TRADE_FILTERS) — a plain underline-tab bar, same visual
+   language as .topbar-nav, sitting between the panel header and the table. */
+.trade-filter-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.trade-filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: var(--space-2) var(--space-1) var(--space-3);
+  color: var(--color-muted-foreground);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.trade-filter-tab:hover {
+  color: var(--color-foreground);
+}
+
+.trade-filter-tab.active {
+  color: var(--color-foreground);
+  border-bottom-color: var(--color-accent);
+}
+
+.trade-filter-tab-count {
+  font-family: "Fira Code", ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-muted-foreground);
+  background: var(--color-surface-2);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+
+.trade-filter-tab.active .trade-filter-tab-count {
+  color: var(--color-foreground);
+}
+
+/* Always rendered together with --expanded below (see AnalyzePage.jsx —
+   there's no partial/docked size, "View Trades" opens straight into the
+   full-viewport overlay), so this only needs the internal layout, not any
+   sizing of its own. */
+.analyze-trades-panel {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Full-viewport overlay below the topbar (44px + its 1px border, see
+   .topbar) — the Hide button unmounts this entirely rather than toggling
+   the class, snapping straight back to the Summary-only view. */
+.analyze-trades-panel--expanded {
+  position: fixed;
+  top: 45px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  border-radius: 0;
+  margin: 0;
 }
 
 .pnl-price-input {
